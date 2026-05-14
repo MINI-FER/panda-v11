@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body { margin: 0;background: #050505;overflow: hidden;} 
+        canvas {display: block;}
+    </style>
+    <meta name="viewport"
+    content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+   <canvas id="canvas"></canvas>
+<script>
+    const canvas = 
+    document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+    //ajustar el tamaño de la pantalla de la lap
+    canvas.width =window.innerWidth
+    canvas.height = Window.innerHeight
+function animar(){
+    // esto limpiara la pantalla cada cuadro 
+    ctx.fillStyle = "rgba (5, 5, 5, 0.1)";
+    ctx.fillRect(0, 0, canvas.Width, canvas.height);
+    // aqui va ir la idea del proyecto 
+    requestAnimationFrame(animar); 
+}
+animar();
+function ajustarpantalla(){
+    canvas.width=window.innerWidth;
+    canvas.height=window.innerHeight;
+}
+// sirve cuando cambiede tammaño la ventana 
+window.addEventListener("resize",ajustarpantalla)
+ajustarpantalla();
+</script>
+</body>
+</html>
