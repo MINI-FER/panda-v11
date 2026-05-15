@@ -1,52 +1,70 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buzón Panda 🐼</title>
+    <title>Para panda 🐼</title>
     <style>
-        /* Estilo del fondo y contenedor */
         body {
-            background-color: #1a1a1a; /* Fondo oscuro como la imagen */
+            background-color: #0a0a0a;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
             overflow: hidden;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Roboto, sans-serif;
         }
 
         #main-container {
             position: relative;
-            transition: all 0.8s ease;
+            transition: all 1s ease-in-out;
             z-index: 10;
         }
 
-        /* Cuerpo del sobre */
+        /* El sobre */
         .sobre {
             width: 280px;
             height: 180px;
-            background: #e0e0e0;
+            background: #e3e3e3;
             position: relative;
             border-radius: 0 0 10px 10px;
             cursor: pointer;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
             z-index: 5;
+            transition: all 0.5s ease;
         }
 
-        /* Tapa del sobre (Triángulo superior) */
+        /* La tapa */
         .tapa {
             position: absolute;
             top: 0;
             left: 0;
             border-left: 140px solid transparent;
             border-right: 140px solid transparent;
-            border-top: 100px solid #dcdcdc;
+            border-top: 100px solid #cfcfcf;
             transform-origin: top;
-            transition: transform 0.6s ease;
-            z-index: 6; /* Por encima del papel al inicio */
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 6;
+        }
+
+        /* EL SELLO (LACRE) */
+        .sello {
+            position: absolute;
+            top: 75px; /* Posicionado justo en la punta de la tapa */
+            left: 120px;
+            width: 40px;
+            height: 40px;
+            background: radial-gradient(circle, #ff5f6d, #d44d5a);
+            border-radius: 50%;
+            z-index: 7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            font-size: 20px;
+            transition: all 0.4s ease;
+            border: 2px solid rgba(255,255,255,0.2);
         }
 
         /* El papel con tu mensaje */
@@ -55,12 +73,12 @@
             top: 10px;
             left: 15px;
             width: 250px;
-            background: white;
-            padding: 20px;
+            background: #ffffff;
+            padding: 25px 20px;
             border-radius: 5px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
             transition: all 0.7s ease;
-            z-index: 4; /* Escondido detrás de la tapa */
+            z-index: 4;
             opacity: 0;
             text-align: center;
             box-sizing: border-box;
@@ -69,106 +87,111 @@
         .papel p {
             font-size: 14px;
             color: #333;
-            line-height: 1.5;
-            margin-bottom: 15px;
+            line-height: 1.6;
+            margin: 0 0 15px 0;
         }
 
-        /* Animación cuando se abre */
+        /* Cuando se abre */
         .sobre.abierto .tapa {
             transform: rotateX(180deg);
-            z-index: 1; /* La tapa se va atrás al abrirse */
+            z-index: 1;
+        }
+
+        .sobre.abierto .sello {
+            opacity: 0;
+            transform: scale(0) rotate(90deg);
         }
 
         .sobre.abierto .papel {
-            transform: translateY(-120px); /* El papel sube para leerse */
+            transform: translateY(-135px);
             opacity: 1;
-            z-index: 7; /* El papel se pone al frente de todo */
+            z-index: 8;
         }
 
-        /* Botón de enviar */
         button {
-            background: linear-gradient(to right, #ff5f6d, #ffc371);
+            background: linear-gradient(135deg, #ff5f6d 0%, #ffc371 100%);
             color: white;
             border: none;
-            padding: 8px 15px;
-            border-radius: 20px;
+            padding: 10px 20px;
+            border-radius: 25px;
             cursor: pointer;
             font-weight: bold;
-            transition: transform 0.2s;
+            box-shadow: 0 4px 15px rgba(255, 95, 109, 0.4);
         }
 
-        button:hover {
-            transform: scale(1.1);
+        /* Transformación a avión de papel */
+        .transformar-avion {
+            clip-path: polygon(0% 50%, 100% 0%, 50% 100%, 0% 50%);
+            background: #ffffff !important;
+            width: 150px !important;
+            height: 100px !important;
+            border-radius: 0 !important;
         }
 
-        /* Canvas de fondo (si quieres mantener tus partículas) */
-        canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 1;
+        .vuelo-animacion {
+            transition: transform 2s cubic-bezier(0.4, 0, 1, 1), opacity 1.5s, clip-path 0.5s !important;
+            transform: translate(1200px, -800px) rotate(-40deg) scale(0.2) !important;
+            opacity: 0 !important;
         }
     </style>
 </head>
 <body>
 
-    <!-- Tu código de fondo (Canvas) -->
-    <canvas id="canvas"></canvas>
-
-    <!-- El Buzón Interactivo -->
     <div id="main-container">
         <div class="sobre" id="sobre-animado" onclick="abrirCarta()">
-            <div class="tapa" id="tapa-sobre"></div>
+            <div class="tapa" id="tapa-visual"></div>
+            <div class="sello" id="sello-lacre">🐼</div>
             <div class="papel" id="papel-mensaje">
                 <p>
-                    Hola amor, esta vez quise darte de una forma nueva el texto para salir de lo común. 
-                    Espero que te guste y que sepas que te amo mucho, eres lo mejor que me ha pasado. ❤️
+                    Odaaa mi niña hermosa ❤️, a veces pienso que nuestra relación es como un avión de papel: 
+                    es capaz de llegar muy lejos aunque parezca frágil, ya que tú y yo podemos lograr lo que sea...
+                    <br><br>
+                    Y quiero, si me dejas, que sigamos volando juntos y entrelazando nuestras almas. 
+                    ¡Felices 10 meses! 🐼✨
                 </p>
-                <button onclick="cerrarYVolar(event)">Cerrar y enviar ✈️</button>
+                <button onclick="cerrarYVolar(event)">Enviar al cielo ✈️</button>
             </div>
         </div>
     </div>
 
     <script>
-        // --- Lógica del Buzón ---
         function abrirCarta() {
             const sobre = document.getElementById('sobre-animado');
-            sobre.classList.add('abierto');
+            if (!sobre.classList.contains('abierto')) {
+                sobre.classList.add('abierto');
+            }
         }
 
         function cerrarYVolar(event) {
-            event.stopPropagation(); // Evita que se reinicie la animación del sobre
-            const contenedor = document.getElementById('main-container');
+            event.stopPropagation();
             
-            // Animación de despegue como avión de papel
-            contenedor.style.transition = "transform 2s cubic-bezier(0.42, 0, 0.58, 1), opacity 1.5s";
-            contenedor.style.transform = "translate(1000px, -600px) rotate(-35deg) scale(0)";
-            contenedor.style.opacity = "0";
+            const contenedor = document.getElementById('main-container');
+            const sobre = document.getElementById('sobre-animado');
+            const tapa = document.getElementById('tapa-visual');
+            const papel = document.getElementById('papel-mensaje');
+            const sello = document.getElementById('sello-lacre');
 
-            // Recarga la página después del vuelo para que se pueda repetir
+            // Ocultamos elementos para la transformación
+            tapa.style.opacity = "0";
+            papel.style.opacity = "0";
+            sello.style.opacity = "0";
+            
+            // Transformación visual a forma de ala/avión
+            sobre.classList.add('transformar-avion');
+
+            // Despegue
+            setTimeout(() => {
+                contenedor.classList.add('vuelo-animacion');
+            }, 100);
+
             setTimeout(() => {
                 location.reload();
             }, 2500);
         }
-
-        // --- Tu lógica de partículas (Opcional, la que tenías en tu foto) ---
-        const canvas = document.getElementById("canvas");
-        const ctx = canvas.getContext("2d");
-        
-        function ajustarPantalla() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-
-        window.addEventListener("resize", ajustarPantalla);
-        ajustarPantalla();
-
-        function animar() {
-            ctx.fillStyle = "rgba(5, 5, 5, 0.1)";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            requestAnimationFrame(animar);
-        }
-        animar();
     </script>
 </body>
 </html>
+
+
+
+
