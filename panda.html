@@ -1,66 +1,66 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Para mi niña hermosa 🐼</title>
+    <title>Buzón Panda 🐼</title>
     <style>
-        /* Estilo general del fondo */
+        /* Estilo del fondo y contenedor */
         body {
-            background-color: #0a0a0a;
+            background-color: #1a1a1a; /* Fondo oscuro como la imagen */
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
             overflow: hidden;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        /* Contenedor del sobre que se convierte en avión */
         #main-container {
             position: relative;
             transition: all 0.8s ease;
             z-index: 10;
         }
 
-        /* El cuerpo del sobre */
+        /* Cuerpo del sobre */
         .sobre {
             width: 280px;
             height: 180px;
-            background: #e3e3e3;
+            background: #e0e0e0;
             position: relative;
             border-radius: 0 0 10px 10px;
             cursor: pointer;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
             z-index: 5;
         }
 
-        /* La solapa del sobre (el triángulo) */
+        /* Tapa del sobre (Triángulo superior) */
         .tapa {
             position: absolute;
             top: 0;
             left: 0;
             border-left: 140px solid transparent;
             border-right: 140px solid transparent;
-            border-top: 100px solid #cfcfcf;
+            border-top: 100px solid #dcdcdc;
             transform-origin: top;
-            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 6;
+            transition: transform 0.6s ease;
+            z-index: 6; /* Por encima del papel al inicio */
         }
 
-        /* El papel con tu mensaje especial */
+        /* El papel con tu mensaje */
         .papel {
             position: absolute;
             top: 10px;
             left: 15px;
             width: 250px;
-            background: #ffffff;
-            padding: 25px 20px;
+            background: white;
+            padding: 20px;
             border-radius: 5px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
             transition: all 0.7s ease;
-            z-index: 4; /* Oculto detrás de la tapa al inicio */
+            z-index: 4; /* Escondido detrás de la tapa */
             opacity: 0;
             text-align: center;
             box-sizing: border-box;
@@ -69,89 +69,106 @@
         .papel p {
             font-size: 14px;
             color: #333;
-            line-height: 1.6;
-            margin: 0 0 15px 0;
+            line-height: 1.5;
+            margin-bottom: 15px;
         }
 
-        /* Clase que abre el sobre al hacer click */
+        /* Animación cuando se abre */
         .sobre.abierto .tapa {
             transform: rotateX(180deg);
-            z-index: 1; /* Se va atrás para que el papel suba por delante */
+            z-index: 1; /* La tapa se va atrás al abrirse */
         }
 
         .sobre.abierto .papel {
-            transform: translateY(-135px);
+            transform: translateY(-120px); /* El papel sube para leerse */
             opacity: 1;
-            z-index: 7; /* Sube al frente de todo */
+            z-index: 7; /* El papel se pone al frente de todo */
         }
 
-        /* Estilo del botón */
+        /* Botón de enviar */
         button {
-            background: linear-gradient(135deg, #ff5f6d 0%, #ffc371 100%);
+            background: linear-gradient(to right, #ff5f6d, #ffc371);
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 25px;
+            padding: 8px 15px;
+            border-radius: 20px;
             cursor: pointer;
             font-weight: bold;
-            box-shadow: 0 4px 15px rgba(255, 95, 109, 0.4);
             transition: transform 0.2s;
         }
 
         button:hover {
-            transform: scale(1.05);
+            transform: scale(1.1);
         }
 
-        /* Animación para que el sobre vuele como un avión de papel */
-        .vuelo-avion {
-            transition: transform 2.5s cubic-bezier(0.4, 0, 1, 1), opacity 2s !important;
-            transform: translate(1200px, -800px) rotate(-40deg) scale(0.1) !important;
-            opacity: 0 !important;
+        /* Canvas de fondo (si quieres mantener tus partículas) */
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
         }
     </style>
 </head>
 <body>
 
+    <!-- Tu código de fondo (Canvas) -->
+    <canvas id="canvas"></canvas>
+
+    <!-- El Buzón Interactivo -->
     <div id="main-container">
         <div class="sobre" id="sobre-animado" onclick="abrirCarta()">
-            <div class="tapa"></div>
+            <div class="tapa" id="tapa-sobre"></div>
             <div class="papel" id="papel-mensaje">
                 <p>
-                    Odaaa mi niña hermosa ❤️, a veces pienso que nuestra relación es como un avión de papel: 
-                    es capaz de llegar muy lejos aunque parezca frágil, ya que tú y yo podemos lograr lo que sea...
-                    <br><br>
-                    Y quiero, si me dejas, que sigamos volando juntos y entrelazando nuestras almas. 
-                    ¡Felices 10 meses! 🐼✨
+                    Hola amor, esta vez quise darte de una forma nueva el texto para salir de lo común. 
+                    Espero que te guste y que sepas que te amo mucho, eres lo mejor que me ha pasado. ❤️
                 </p>
-                <button onclick="cerrarYVolar(event)">Enviar al cielo ✈️</button>
+                <button onclick="cerrarYVolar(event)">Cerrar y enviar ✈️</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Función para abrir la carta cuando ella la toque
+        // --- Lógica del Buzón ---
         function abrirCarta() {
             const sobre = document.getElementById('sobre-animado');
-            if (!sobre.classList.contains('abierto')) {
-                sobre.classList.add('abierto');
-            }
+            sobre.classList.add('abierto');
         }
 
-        // Función para activar el vuelo
         function cerrarYVolar(event) {
-            // Evita que el click del botón active la función del sobre otra vez
-            event.stopPropagation();
-            
+            event.stopPropagation(); // Evita que se reinicie la animación del sobre
             const contenedor = document.getElementById('main-container');
             
-            // Iniciamos la animación de vuelo
-            contenedor.classList.add('vuelo-avion');
+            // Animación de despegue como avión de papel
+            contenedor.style.transition = "transform 2s cubic-bezier(0.42, 0, 0.58, 1), opacity 1.5s";
+            contenedor.style.transform = "translate(1000px, -600px) rotate(-35deg) scale(0)";
+            contenedor.style.opacity = "0";
 
-            // Recargamos la página después de que vuele para que se resetee
+            // Recarga la página después del vuelo para que se pueda repetir
             setTimeout(() => {
                 location.reload();
-            }, 3000);
+            }, 2500);
         }
+
+        // --- Tu lógica de partículas (Opcional, la que tenías en tu foto) ---
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+        
+        function ajustarPantalla() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener("resize", ajustarPantalla);
+        ajustarPantalla();
+
+        function animar() {
+            ctx.fillStyle = "rgba(5, 5, 5, 0.1)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            requestAnimationFrame(animar);
+        }
+        animar();
     </script>
 </body>
 </html>
