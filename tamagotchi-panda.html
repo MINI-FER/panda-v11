@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Yoyo el Panda 🐼</title>
+    <title>Yoyo el Panda 🐼</title>
     <style>
         :root {
             --case-color: #ff80ab;
@@ -23,7 +23,7 @@
 
         .tamagotchi-case {
             width: 320px;
-            height: 440px;
+            height: 460px;
             background: var(--case-color);
             border-radius: 50% 50% 45% 45% / 40% 40% 60% 60%;
             position: relative;
@@ -31,13 +31,13 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding-top: 40px;
+            padding-top: 30px;
             border: 8px solid #f06292;
         }
 
         .screen {
             width: 210px;
-            height: 170px;
+            height: 180px;
             background: var(--screen-color);
             border: 10px solid #880e4f;
             border-radius: 10px;
@@ -46,6 +46,38 @@
             justify-content: center;
             align-items: center;
             overflow: hidden;
+        }
+
+        /* Estilos del Nivel */
+        .level-ui {
+            position: absolute;
+            top: 5px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 10;
+        }
+        .lvl-tag {
+            background: #880e4f;
+            color: white;
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+        .xp-bg {
+            width: 60px;
+            height: 4px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 2px;
+        }
+        .xp-fill {
+            height: 100%;
+            background: #4caf50;
+            width: 0%;
+            transition: width 0.3s;
         }
 
         .panda { font-size: 80px; transition: 0.3s; z-index: 2; }
@@ -82,7 +114,7 @@
             z-index: 20;
         }
 
-        .float-text { position: absolute; animation: floatUp 1s forwards; font-weight: bold; color: #c2185b; }
+        .float-text { position: absolute; animation: floatUp 1s forwards; font-weight: bold; color: #c2185b; z-index: 15; }
         @keyframes floatUp { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-60px); } }
     </style>
 </head>
@@ -90,10 +122,19 @@
 
     <div class="tamagotchi-case">
         <div class="screen" id="main-screen">
+            <!-- Interfaz de Nivel -->
+            <div class="level-ui">
+                <div class="lvl-tag" id="lvl-txt">NIVEL 1</div>
+                <div class="xp-bg">
+                    <div id="xp-fill" class="xp-fill"></div>
+                </div>
+            </div>
+
             <div id="panda" class="panda bounce">🐼</div>
+            
             <div id="overlay" class="overlay">
                 <p id="mensaje-muerte" style="font-size: 14px;"></p>
-                <button onclick="resetGame()" style="background:#ff4081; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer;">Cuidar de nuevo</button>
+                <button onclick="resetGame()" style="background:#ff4081; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; font-family: 'Courier New'; font-weight:bold;">REINTENTAR</button>
             </div>
         </div>
 
@@ -111,15 +152,19 @@
             <button class="btn" onclick="play()">🎾<span class="btn-label">JUGAR</span></button>
             <button class="btn" onclick="sleep()">💤<span class="btn-label">DORMIR</span></button>
         </div>
+        <p style="font-size: 10px; margin-top: 15px; color: #880e4f;">para mi niña</p>
     </div>
 
     <script>
         let h = 100, f = 100, e = 100;
+        let xp = 0, lvl = 1; // VARIABLES DE NIVEL AÑADIDAS
         let isSleeping = false, isDead = false;
 
         const loop = setInterval(() => {
             if (!isSleeping && !isDead) {
-                h -= 2; f -= 1.5; e -= 1;
+                h = Math.max(0, h - 2); 
+                f = Math.max(0, f - 1.5); 
+                e = Math.max(0, e - 1);
                 updateUI();
                 if (h <= 0 || f <= 0 || e <= 0) gameOver();
             }
@@ -129,6 +174,8 @@
             document.getElementById('h-fill').style.width = h + '%';
             document.getElementById('f-fill').style.width = f + '%';
             document.getElementById('e-fill').style.width = e + '%';
+            document.getElementById('xp-fill').style.width = xp + '%';
+            document.getElementById('lvl-txt').innerText = 'NIVEL ' + lvl;
             
             if (!isDead && !isSleeping) {
                 if (h < 30) panda.innerText = '🤤';
@@ -138,19 +185,32 @@
             }
         }
 
+        // FUNCIÓN PARA GANAR EXPERIENCIA
+        function gainXP(amount) {
+            xp += amount;
+            if (xp >= 100) {
+                lvl++;
+                xp = 0;
+                createEffect('✨ NIVEL SUBIDO 💪🏽');
+            }
+        }
+
         function feed() {
             if (isSleeping || isDead) return;
             h = Math.min(100, h + 15);
-            e -= 2;
-            createEffect('🍎 +15');
+            e = Math.max(0, e - 2);
+            gainXP(10); // SUMA XP
+            createEffect('🍎 +10 XP');
             updateUI();
         }
 
         function play() {
             if (isSleeping || isDead) return;
             f = Math.min(100, f + 20);
-            h -= 5; e -= 10;
-            createEffect('❤️ +20');
+            h = Math.max(0, h - 5); 
+            e = Math.max(0, e - 10);
+            gainXP(20); // SUMA XP
+            createEffect('❤️ +20 XP');
             updateUI();
         }
 
@@ -163,7 +223,7 @@
             
             let restore = setInterval(() => {
                 if (e < 100 && isSleeping) {
-                    e = Math.min(100, e + 20);
+                    e = Math.min(100, e + 25);
                     updateUI();
                 } else {
                     isSleeping = false;
@@ -195,7 +255,7 @@
         }
 
         function resetGame() {
-            h = 100; f = 100; e = 100;
+            h = 100; f = 100; e = 100; xp = 0; lvl = 1;
             isDead = false; isSleeping = false;
             document.getElementById('overlay').style.display = 'none';
             panda.classList.remove('dead', 'sleep');
@@ -207,13 +267,10 @@
             const el = document.createElement('div');
             el.className = 'float-text';
             el.innerText = text;
-            el.style.left = '50%'; el.style.top = '50%';
+            el.style.left = '30%'; el.style.top = '60%';
             document.getElementById('main-screen').appendChild(el);
             setTimeout(() => el.remove(), 1000);
         }
     </script>
 </body>
 </html>
-
-
-
