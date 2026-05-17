@@ -248,7 +248,7 @@
     <!-- Modal para ajustar la fecha de aniversario -->
     <div class="modal" id="settings-modal" onclick="closeSettings(event)">
         <div class="modal-content" onclick="event.stopPropagation()">
-            <h3 style="color: var(--dark-pink); margin-top: 0;">Fecha en que empezaron</h3>
+            <h3 style="color: var(--dark-pink); margin-top: 0;">Fecha en que empezamos  </h3>
             <p style="font-size: 12px; color: #666;">Selecciona el día exacto de su aniversario:</p>
             <input type="datetime-local" id="start-date-input">
             <button class="modal-btn" onclick="saveDate()">Guardar Fecha</button>
@@ -336,19 +336,19 @@
                     
                     mainVal = Math.floor(monthDecimal);
                     decVal = "." + (monthDecimal % 1).toFixed(7).substring(2);
-                    unitText = "Meses de puros abrazos";
+                    unitText = "Meses de vivir en nuestro mundo de caramelo";
                     break;
 
                 case 'weeks':
                     mainVal = Math.floor(totalWeeks);
                     decVal = "." + (totalWeeks % 1).toFixed(7).substring(2);
-                    unitText = "Semanas amándote";
+                    unitText = "Semanas de alegria";
                     break;
 
                 case 'days':
                     mainVal = Math.floor(totalDays);
                     decVal = "." + (totalDays % 1).toFixed(7).substring(2);
-                    unitText = "Días llenos de luz";
+                    unitText = "Días llenos de amor ";
                     break;
 
                 case 'hours':
@@ -367,7 +367,7 @@
                     mainVal = Math.floor(totalSeconds).toLocaleString();
                     const ms = (diffMs % 1000).toString().padStart(3, '0');
                     decVal = "." + ms;
-                    unitText = "Segundos de pura felicidad";
+                    unitText = "Segundos de puro extrañarte";
                     break;
             }
 
@@ -405,7 +405,7 @@
         }
 
         // Reacciones del panda al tocarlo
-        const pandaFaces = ['🐼', '💖', '😍', '🐨', '🐻', '🍭'];
+        const pandaFaces = ['🐼', '💖', '😍', '🐱', '❨･¨⬮', '🍭'];
         function pandaReact(event) {
             if(event) event.stopPropagation();
             const p = document.getElementById('panda-face');
