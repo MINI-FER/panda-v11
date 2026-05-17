@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nuestro Tiempo Juntos 🐼❤️</title>
+    <title>Nuestro Tiempo Juntos </title>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&family=Pacifico&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -241,7 +241,7 @@
         </div>
 
         <p style="font-size: 11px; color: var(--dark-pink); margin-top: 15px; font-weight: bold;">
-            ¡Cada segundo a tu lado cuenta! 🌹
+            ¡Cada segundo a tu lado es lo mas importante¡
         </p>
     </div>
 
@@ -257,7 +257,7 @@
 
     <script>
         // Fecha de inicio corregida: 10 de Julio de 2025 a las 00:00:00
-        let startDateStr = localStorage.getItem('aniversario_date') || '2025-07-10T00:00';
+        let startDateStr = localStorage.getItem('aniversario_date') || '2025-10-10T00:00';
         let startDate = new Date(startDateStr);
         let currentUnit = 'months';
 
@@ -376,7 +376,7 @@
             document.getElementById('unit-txt').innerText = unitText;
 
             // Animación de puntitos de corazón palpitantes
-            const heartStates = ["❤️🖤🖤", "❤️❤️🖤", "❤️❤️❤️", "🖤❤️❤️", "🖤🖤❤️"];
+            const heartStates = ["❤️💙💙", "❤️❤️💙", "❤️❤️❤️", "💙❤️❤️", "💙💙❤️"];
             const index = Math.floor((now.getMilliseconds() / 200) % 5);
             document.getElementById('dots').innerText = heartStates[index];
 
@@ -389,7 +389,7 @@
         function spawnHeart(event) {
             const heart = document.createElement('div');
             heart.className = 'heart';
-            heart.innerText = ['❤️', '💖', '🐼', '✨', '🌹'][Math.floor(Math.random() * 5)];
+            heart.innerText = ['💙', '💖', '🐼', '✨', '🌹'][Math.floor(Math.random() * 5)];
             
             const rect = document.querySelector('.card').getBoundingClientRect();
             let x = event ? event.clientX : rect.left + rect.width / 2;
