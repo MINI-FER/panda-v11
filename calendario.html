@@ -414,10 +414,10 @@
 
         requestAnimationFrame(updateCounter);
 
-        function spawnHeart(event) {
+               function spawnHeart(event) {
             const heart = document.createElement('div');
             heart.className = 'heart';
-            heart.innerText = ['💙', '💖', '🐼', '🌎', '🍭'][Math.floor(Math.random() * 5)];
+            heart.innerText = ['❤️', '💖', '🐼', '✨', '🌹'][Math.floor(Math.random() * 5)];
             
             const rect = document.querySelector('.card').getBoundingClientRect();
             let x = event ? event.clientX : rect.left + rect.width / 2;
@@ -432,13 +432,13 @@
             }, 1200);
         }
 
-        const pandaFaces = ['🐼', '💖', '😍', '🐱'];
+        const pandaFaces = ['🐼', '💖', '😍', '🐨', '🐻', '🍭'];
         function pandaReact(event) {
             if(event) event.stopPropagation();
             const p = document.getElementById('panda-face');
             p.innerText = pandaFaces[Math.floor(Math.random() * pandaFaces.length)];
             spawnHeart(event);
-            setTimeout(() => { p.innerText = '🐼'; }, 1500);
+            setTimeout(() => { p.innerText = '🐼'; }, 1500)
         }
 
         function openSettings(event) {
