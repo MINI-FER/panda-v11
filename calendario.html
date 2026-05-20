@@ -1,10 +1,11 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nuestro Tiempo Juntos </title>
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&family=Pacifico&display=swap" rel="stylesheet">
+    <title>Nuestro Tiempo Juntos 🐼❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght=400;600;700&family=Pacifico&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary-pink: #ff80ab;
@@ -40,7 +41,6 @@
             border: 4px solid var(--primary-pink);
         }
 
-        /* Botón de configuración */
         .settings-btn {
             position: absolute;
             top: 20px;
@@ -70,7 +70,6 @@
             margin-bottom: 25px;
         }
 
-        /* Panda animado que reacciona */
         .panda-container {
             font-size: 70px;
             margin: 10px 0;
@@ -83,7 +82,6 @@
             50% { transform: translateY(-10px) scale(1.05); }
         }
 
-        /* Selector de unidades (Tabs) */
         .tabs-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -110,7 +108,6 @@
             box-shadow: 0 4px 10px rgba(255, 128, 171, 0.5);
         }
 
-        /* Pantalla del Contador */
         .counter-display {
             background: #fff0f5;
             border-radius: 20px;
@@ -140,18 +137,40 @@
         }
 
         .unit-label {
-            font-size: 14px;
-            color: #777;
+            font-size: 13px;
+            color: #555;
             font-weight: 600;
             margin-top: 5px;
+            padding: 0 5px;
+            line-height: 1.4;
         }
 
-        /* Barra de progreso de micro-segundos para dar dinamismo */
         .progress-dots {
             font-size: 12px;
             color: var(--primary-pink);
             letter-spacing: 3px;
             margin-top: 5px;
+        }
+
+        /* --- Estilos para tu poema largo --- */
+        .poema-box {
+            background: #fff8fa;
+            border: 1px solid #ffc2d1;
+            border-radius: 15px;
+            padding: 15px;
+            margin-top: 15px;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #444;
+            text-align: justify;
+            max-height: 180px;
+            overflow-y: auto;
+            display: none; /* Se activa con JS en meses y semanas */
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .poema-box strong {
+            color: var(--dark-pink);
         }
 
         /* Modal de Configuración */
@@ -198,7 +217,6 @@
             cursor: pointer;
         }
 
-        /* Corazones flotantes al hacer tap */
         .heart {
             position: absolute;
             font-size: 24px;
@@ -222,7 +240,6 @@
         <h1>Amorchito & Yo</h1>
         <div class="subtitle" id="date-subtitle">Desde el 10 de julio, 2025</div>
 
-        <!-- Botones de Unidad -->
         <div class="tabs-grid">
             <button class="tab-btn active" onclick="setUnit('months', event)">Meses</button>
             <button class="tab-btn" onclick="setUnit('weeks', event)">Semanas</button>
@@ -232,7 +249,6 @@
             <button class="tab-btn" onclick="setUnit('seconds', event)">Segundos</button>
         </div>
 
-        <!-- Pantalla del Contador -->
         <div class="counter-display">
             <div class="main-number" id="primary-num">0</div>
             <div class="decimal-part" id="decimal-num"></div>
@@ -240,15 +256,22 @@
             <div class="progress-dots" id="dots">❤️❤️❤️</div>
         </div>
 
+        <div class="poema-box" id="carta-poema">
+            Me perdí en tus ojos como si fuera
+            la inmensidad del mar frente a mi
+            invitándome a nadar en ella
+            Me perdí en tu mirada risueña profunda y penetrante sin temor a no encontrar regreso de aquel inmenso mar, los ojos son el reflejo del alma. 
+            Tu alma es esa que está llena de cicatrices que con el tiempo haz ido cultivándolas como el jardín más hermoso, donde los rayos de sol que haz dejado pasar en hecho que las flores sean únicas originales e irrepetibles y que cuidas con una pasión única, los que de verdad te conocen saben que entrando a ese jardín, las posibilidades de no regreso son enormes y aún así sin saberlo me  perdí en tus ojos bajo mi propia responsabilidad sabiendo que podría volverme adictivo y aquí estoy escribiendo sobre tus hermosos ojos y tu alma, sobre todo lo que tú involucras, pero el detalle más grande es que tú no lo sabes ni siquiera lo imaginas pero  este es el secreto que tengo
+         </div>
+
         <p style="font-size: 11px; color: var(--dark-pink); margin-top: 15px; font-weight: bold;">
-            ¡Cada segundo a tu lado es lo mas importante¡
+            ¡Cada segundo a tu lado cuenta! 🌹
         </p>
     </div>
 
-    <!-- Modal para ajustar la fecha de aniversario -->
     <div class="modal" id="settings-modal" onclick="closeSettings(event)">
         <div class="modal-content" onclick="event.stopPropagation()">
-            <h3 style="color: var(--dark-pink); margin-top: 0;">Fecha en que empezamos  </h3>
+            <h3 style="color: var(--dark-pink); margin-top: 0;">Fecha en que empezaron</h3>
             <p style="font-size: 12px; color: #666;">Selecciona el día exacto de su aniversario:</p>
             <input type="datetime-local" id="start-date-input">
             <button class="modal-btn" onclick="saveDate()">Guardar Fecha</button>
@@ -256,19 +279,26 @@
     </div>
 
     <script>
-        // Fecha de inicio corregida: 10 de Julio de 2025 a las 00:00:00
-        let startDateStr = localStorage.getItem('aniversario_date') || '2025-7-10T00:00';
+        // Textos cortos informativos arriba del poema
+        const TEXTOS_UNIDADES = {
+            months: "Meses perdido en tu mirada", 
+            weeks: "Semanas atrapado en el jardín de tu alma",       
+            days: "Días llenos de alegría",
+            hours: "Horas pensando en ti y tu bella sonrisa",
+            minutes: "Minutos de felicidad a tu lado",
+            seconds: "Segundos latiendo por ti ❤️"
+        };
+
+        let startDateStr = localStorage.getItem('aniversario_date') || '2025-07-10T00:00';
         let startDate = new Date(startDateStr);
         let currentUnit = 'months';
 
-        // Actualizar subtítulo en la tarjeta
         function updateSubtitle() {
             const opciones = { day: 'numeric', month: 'long', year: 'numeric' };
             document.getElementById('date-subtitle').innerText = `Desde el ${startDate.toLocaleDateString('es-ES', opciones)}`;
         }
         updateSubtitle();
 
-        // Guardar fecha desde el modal
         function saveDate() {
             const val = document.getElementById('start-date-input').value;
             if(val) {
@@ -284,17 +314,26 @@
             if(event) event.stopPropagation();
             currentUnit = unit;
             
-            // Cambiar clases activas de los botones
             const buttons = document.querySelectorAll('.tab-btn');
             buttons.forEach(btn => btn.classList.remove('active'));
             
             const target = event ? event.target : [...buttons].find(b => b.innerText.toLowerCase() === unit);
             if(target) target.classList.add('active');
             
+            // Mostrar u ocultar el poema dependiendo de la unidad
+            const poemaBox = document.getElementById('carta-poema');
+            if(unit === 'months' || unit === 'weeks') {
+                poemaBox.style.display = 'block';
+            } else {
+                poemaBox.style.display = 'none';
+            }
+
             pandaReact();
         }
 
-        // Cálculos matemáticos en tiempo real
+        // Forzar que se muestre al cargar la primera vez en meses
+        setTimeout(() => { setUnit('months'); }, 100);
+
         function updateCounter() {
             const now = new Date();
             const diffMs = now - startDate;
@@ -314,60 +353,51 @@
 
             let mainVal = "";
             let decVal = "";
-            let unitText = "";
+            let unitText = TEXTOS_UNIDADES[currentUnit];
 
             switch (currentUnit) {
                 case 'months':
-                    // Cálculo de meses reales con precisión decimal
                     let months = (now.getFullYear() - startDate.getFullYear()) * 12;
                     months -= startDate.getMonth();
                     months += now.getMonth();
                     
-                    // Ajuste de días proporcionales para el decimal
                     const startDay = startDate.getDate();
                     const currentDay = now.getDate();
                     const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
                     
                     let dayDiff = currentDay - startDay;
-                    // Añadir precisión de horas/minutos al día
                     dayDiff += (now.getHours() + now.getMinutes()/60 + now.getSeconds()/3600) / 24;
 
                     const monthDecimal = months + (dayDiff / daysInMonth);
                     
                     mainVal = Math.floor(monthDecimal);
                     decVal = "." + (monthDecimal % 1).toFixed(7).substring(2);
-                    unitText = "Meses de vivir en nuestro mundo de caramelo";
                     break;
 
                 case 'weeks':
                     mainVal = Math.floor(totalWeeks);
                     decVal = "." + (totalWeeks % 1).toFixed(7).substring(2);
-                    unitText = "Semanas de alegria";
                     break;
 
                 case 'days':
                     mainVal = Math.floor(totalDays);
                     decVal = "." + (totalDays % 1).toFixed(7).substring(2);
-                    unitText = "Días llenos de amor ";
                     break;
 
                 case 'hours':
                     mainVal = Math.floor(totalHours).toLocaleString();
                     decVal = "." + (totalHours % 1).toFixed(5).substring(2);
-                    unitText = "Horas pensando en ti";
                     break;
 
                 case 'minutes':
                     mainVal = Math.floor(totalMinutes).toLocaleString();
                     decVal = "." + (totalMinutes % 1).toFixed(3).substring(2);
-                    unitText = "Minutos construyendo lo nuestro";
                     break;
 
                 case 'seconds':
                     mainVal = Math.floor(totalSeconds).toLocaleString();
                     const ms = (diffMs % 1000).toString().padStart(3, '0');
                     decVal = "." + ms;
-                    unitText = "Segundos de puro extrañarte";
                     break;
             }
 
@@ -375,7 +405,6 @@
             document.getElementById('decimal-num').innerText = decVal;
             document.getElementById('unit-txt').innerText = unitText;
 
-            // Animación de puntitos de corazón palpitantes
             const heartStates = ["❤️💙💙", "❤️❤️💙", "❤️❤️❤️", "💙❤️❤️", "💙💙❤️"];
             const index = Math.floor((now.getMilliseconds() / 200) % 5);
             document.getElementById('dots').innerText = heartStates[index];
@@ -385,11 +414,10 @@
 
         requestAnimationFrame(updateCounter);
 
-        // Generar corazones volando en la pantalla
         function spawnHeart(event) {
             const heart = document.createElement('div');
             heart.className = 'heart';
-            heart.innerText = ['💙', '💖', '🐼', '✨', '🌹'][Math.floor(Math.random() * 5)];
+            heart.innerText = ['💙', '💖', '🐼'][Math.floor(Math.random() * 5)];
             
             const rect = document.querySelector('.card').getBoundingClientRect();
             let x = event ? event.clientX : rect.left + rect.width / 2;
@@ -404,16 +432,13 @@
             }, 1200);
         }
 
-        // Reacciones del panda al tocarlo
-        const pandaFaces = ['🐼', '💖', '😍', '🐱', '❨･¨⬮', '🍭'];
+        const pandaFaces = ['🐼', '💖', '😍', '🐱',];
         function pandaReact(event) {
             if(event) event.stopPropagation();
             const p = document.getElementById('panda-face');
             p.innerText = pandaFaces[Math.floor(Math.random() * pandaFaces.length)];
             spawnHeart(event);
-            setTimeout(() => {
-                p.innerText = '🐼';
-            }, 1500);
+            setTimeout(() => { p.innerText = '🐼'; }, 1500);
         }
 
         function openSettings(event) {
