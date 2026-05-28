@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dominó Digital - Humanidades 2</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1e1e24;
+            color: #fff;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            color: #4da6ff;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+
+        .sub {
+            color: #aaa;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        /* Contenedor principal del tablero */
+        .tablero {
+            width: 90%;
+            max-width: 800px;
+            background-color: #2a2a35;
+            border: 2px dashed #4da6ff;
+            border-radius: 10px;
+            min-height: 200px;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        /* Estructura de la Ficha */
+        .ficha {
+            display: flex;
+            width: 240px;
+            height: 120px;
+            border: 3px solid #000;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        /* Lados de la ficha */
+        .lado {
+            flex: 1;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            font-size: 11px;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .lado-der {
+            border-left: 2px solid #000;
+        }
+
+        .numero {
+            font-size: 14px;
+            align-self: flex-end;
+            background: rgba(0,0,0,0.2);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        /* Colores por Tema */
+        .color-1 { background-color: #d9383a; } /* Rojo: Racismo */
+        .color-4 { background-color: #f1c40f; color: #000; } /* Amarillo: Parresía */
+        .color-3 { background-color: #27ae60; } /* Verde: Hermenéutica */
+        .color-6 { background-color: #8e44ad; } /* Morado: Prospectiva */
+
+        /* Contenedor de la mano del jugador */
+        .mano-jugador {
+            width: 90%;
+            max-width: 800px;
+            background-color: #23232e;
+            border-top: 4px solid #8e44ad;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .mis-fichas {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        /* Fichas miniatura en la mano */
+        .ficha-mini {
+            width: 100px;
+            height: 50px;
+            border: 2px solid #000;
+            border-radius: 4px;
+            display: flex;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .ficha-mini:hover {
+            transform: translateY(-5px);
+        }
+
+        .mini-lado {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 14px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>DOMINÓ DIGITAL: HUMANIDADES 2</h1>
+    <div class="sub">Módulo 3: La experiencia de sí mismo en el discurso colectivo</div>
+
+    <h3>Mesa de Juego (Conexión por el Tema 4)</h3>
+    <div class="tablero">
+        
+        <div class="ficha">
+            <div class="lado color-1">
+                <span>Racismo sutil: Bromas cotidianas que excluyen.</span>
+                <span class="numero">[1]</span>
+            </div>
+            <div class="lado lado-der color-4">
+                <span>Parresía: Hablar con la verdad ante el grupo.</span>
+                <span class="numero">[4]</span>
+            </div>
+        </div>
+
+        <div class="ficha">
+            <div class="lado color-4">
+                <span>Decir la verdad de frente por el bien común.</span>
+                <span class="numero">[4]</span>
+            </div>
+            <div class="lado lado-der color-6">
+                <span>Prospectiva: Diseñar el futuro comunitario.</span>
+                <span class="numero">[6]</span>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="mano-jugador">
+        <h3>Tu Mano (Fichas Disponibles)</h3>
+        <div class="mis-fichas">
+            
+            <div class="ficha-mini">
+                <div class="mini-lado color-1">1</div>
+                <div class="mini-lado color-3" style="border-left: 1px solid #000;">3</div>
+            </div>
+
+            <div class="ficha-mini">
+                <div class="mini-lado color-6">6</div>
+                <div class="mini-lado color-6" style="border-left: 1px solid #000;">6</div>
+            </div>
+
+            <div class="ficha-mini">
+                <div class="mini-lado color-4">4</div>
+                <div class="mini-lado color-1" style="border-left: 1px solid #000;">1</div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>
