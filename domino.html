@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dominó Digital - Humanidades 2</title>
+    <title>Dominó Digital Interactivo - Humanidades 2</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -14,6 +14,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            user-select: none;
         }
 
         h1 {
@@ -24,45 +25,54 @@
 
         .sub {
             color: #aaa;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             text-align: center;
         }
 
-        /* Contenedor principal del tablero */
-        .tablero {
+        /* Indicador de estado o alertas */
+        #mensaje {
+            height: 25px;
+            color: #ff4d4d;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        /* TABLERO DE JUEGO */
+        .tablero-contenedor {
             width: 90%;
-            max-width: 800px;
+            max-width: 900px;
             background-color: #2a2a35;
             border: 2px dashed #4da6ff;
             border-radius: 10px;
-            min-height: 200px;
+            min-height: 180px;
             padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 15px;
-            margin-bottom: 40px;
+            gap: 10px;
+            margin-bottom: 30px;
+            overflow-x: auto;
         }
 
-        /* Estructura de la Ficha */
-        .ficha {
+        /* ESTILO DE LAS FICHAS GRANDES (En el tablero) */
+        .ficha-tablero {
             display: flex;
-            width: 240px;
-            height: 120px;
+            width: 200px;
+            height: 100px;
             border: 3px solid #000;
             border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            flex-shrink: 0;
         }
 
-        /* Lados de la ficha */
         .lado {
             flex: 1;
-            padding: 10px;
+            padding: 8px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: bold;
             color: #fff;
         }
@@ -72,23 +82,17 @@
         }
 
         .numero {
-            font-size: 14px;
+            font-size: 13px;
             align-self: flex-end;
-            background: rgba(0,0,0,0.2);
-            padding: 2px 6px;
-            border-radius: 4px;
+            background: rgba(0,0,0,0.3);
+            padding: 1px 5px;
+            border-radius: 3px;
         }
 
-        /* Colores por Tema */
-        .color-1 { background-color: #d9383a; } /* Rojo: Racismo */
-        .color-4 { background-color: #f1c40f; color: #000; } /* Amarillo: Parresía */
-        .color-3 { background-color: #27ae60; } /* Verde: Hermenéutica */
-        .color-6 { background-color: #8e44ad; } /* Morado: Prospectiva */
-
-        /* Contenedor de la mano del jugador */
+        /* MANO DEL JUGADOR */
         .mano-jugador {
             width: 90%;
-            max-width: 800px;
+            max-width: 900px;
             background-color: #23232e;
             border-top: 4px solid #8e44ad;
             padding: 20px;
@@ -102,86 +106,172 @@
             gap: 20px;
             flex-wrap: wrap;
             margin-top: 15px;
+            min-height: 90px;
+            align-items: center;
         }
 
-        /* Fichas miniatura en la mano */
-        .ficha-mini {
-            width: 100px;
-            height: 50px;
-            border: 2px solid #000;
-            border-radius: 4px;
+        /* FICHAS EN LA MANO (Arrastrables) */
+        .ficha-mano {
             display: flex;
-            cursor: pointer;
-            transition: transform 0.2s;
+            width: 140px;
+            height: 70px;
+            border: 2px solid #000;
+            border-radius: 6px;
+            overflow: hidden;
+            cursor: grab;
+            transition: transform 0.2s, box-shadow 0.2s;
+            flex-shrink: 0;
         }
 
-        .ficha-mini:hover {
-            transform: translateY(-5px);
+        .ficha-mano:active {
+            cursor: grabbing;
         }
 
-        .mini-lado {
+        .ficha-mano:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+
+        .lado-mini {
             flex: 1;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            font-size: 14px;
+            font-size: 11px;
             font-weight: bold;
+            color: #fff;
+            padding: 4px;
+            text-align: center;
         }
+
+        /* COLORES ASIGNADOS POR TEMA */
+        .color-1 { background-color: #d9383a; } /* Rojo: Racismo */
+        .color-3 { background-color: #27ae60; } /* Verde: Hermenéutica */
+        .color-4 { background-color: #f1c40f; color: #000; } /* Amarillo: Parresía */
+        .color-6 { background-color: #8e44ad; } /* Morado: Prospectiva */
     </style>
 </head>
 <body>
 
-    <h1>DOMINÓ DIGITAL: HUMANIDADES 2</h1>
+    <h1>DOMINÓ DIGITAL INTERACTIVO</h1>
     <div class="sub">Módulo 3: La experiencia de sí mismo en el discurso colectivo</div>
+    
+    <!-- Mensajes del árbitro virtual -->
+    <div id="mensaje">Arrastra una ficha de tu mano y suéltala en el tablero</div>
 
-    <h3>Mesa de Juego (Conexión por el Tema 4)</h3>
-    <div class="tablero">
-        
-        <div class="ficha">
+    <!-- TABLERO DE JUEGO (ZONA DE SOLTAR) -->
+    <h3>Mesa de Juego</h3>
+    <div class="tablero-contenedor" id="tablero" ondragover="permitirSoltar(event)" ondrop="soltarFicha(event)">
+        <!-- La ficha inicial ya puesta en el tablero -->
+        <div class="ficha-tablero">
             <div class="lado color-1">
-                <span>Racismo sutil: Bromas cotidianas que excluyen.</span>
+                <span>Racismo sutil en el lenguaje.</span>
                 <span class="numero">[1]</span>
             </div>
             <div class="lado lado-der color-4">
-                <span>Parresía: Hablar con la verdad ante el grupo.</span>
+                <span>Parresía: Hablar con la verdad.</span>
                 <span class="numero">[4]</span>
             </div>
         </div>
-
-        <div class="ficha">
-            <div class="lado color-4">
-                <span>Decir la verdad de frente por el bien común.</span>
-                <span class="numero">[4]</span>
-            </div>
-            <div class="lado lado-der color-6">
-                <span>Prospectiva: Diseñar el futuro comunitario.</span>
-                <span class="numero">[6]</span>
-            </div>
-        </div>
-
     </div>
 
+    <!-- MANO DEL JUGADOR -->
     <div class="mano-jugador">
-        <h3>Tu Mano (Fichas Disponibles)</h3>
-        <div class="mis-fichas">
+        <h3>Tu Mano (Fichas Disponibles para Arrastrar)</h3>
+        <div class="mis-fichas" id="mano">
             
-            <div class="ficha-mini">
-                <div class="mini-lado color-1">1</div>
-                <div class="mini-lado color-3" style="border-left: 1px solid #000;">3</div>
+            <!-- Ficha 1 (Combina con el 4) -->
+            <div class="ficha-mano" id="fichaA" draggable="true" ondragstart="arrastrarFicha(event)" data-izq="4" data-der="6" data-txt-izq="Decir la verdad de frente." data-txt-der="Prospectiva: Futuro común.">
+                <div class="lado-mini color-4">4</div>
+                <div class="lado-mini color-6" style="border-left: 1px solid #000;">6</div>
             </div>
 
-            <div class="ficha-mini">
-                <div class="mini-lado color-6">6</div>
-                <div class="mini-lado color-6" style="border-left: 1px solid #000;">6</div>
-            </div>
-
-            <div class="ficha-mini">
-                <div class="mini-lado color-4">4</div>
-                <div class="mini-lado color-1" style="border-left: 1px solid #000;">1</div>
+            <!-- Ficha 2 (No combina con los extremos actuales) -->
+            <div class="ficha-mano" id="fichaB" draggable="true" ondragstart="arrastrarFicha(event)" data-izq="3" data-der="3" data-txt-izq="Hermenéutica del sujeto." data-txt-der="Auto-examen consciente.">
+                <div class="lado-mini color-3">3</div>
+                <div class="lado-mini color-3" style="border-left: 1px solid #000;">3</div>
             </div>
 
         </div>
     </div>
 
+    <script>
+        // Lógica del juego: extremos actuales del tablero
+        // Al inicio, la ficha del tablero tiene un [1] a la izquierda y un [4] a la derecha
+        let extremoIzquierdo = 1;
+        let extremoDerecho = 4;
+
+        function permitirSoltar(event) {
+            event.preventDefault(); // Necesario para permitir soltar elementos
+        }
+
+        function arrastrarFicha(event) {
+            // Guardamos el ID de la ficha que se está moviendo
+            event.dataTransfer.setData("text/plain", event.target.id);
+            document.getElementById("mensaje").style.color = "#4da6ff";
+            document.getElementById("mensaje").innerText = "Buscando dónde conectar...";
+        }
+
+        function soltarFicha(event) {
+            event.preventDefault();
+            const idFicha = event.dataTransfer.getData("text/plain");
+            const fichaElemento = document.getElementById(idFicha);
+            
+            if (!fichaElemento) return;
+
+            // Extraemos los valores numéricos guardados en los atributos "data-" de la ficha
+            const valIzq = parseInt(fichaElemento.getAttribute("data-izq"));
+            const valDer = parseInt(fichaElemento.getAttribute("data-der"));
+            const txtIzq = fichaElemento.getAttribute("data-txt-izq");
+            const txtDer = fichaElemento.getAttribute("data-txt-der");
+
+            const msgDiv = document.getElementById("mensaje");
+
+            // EL ÁRBITRO DIGITAL: Validamos si conecta por el extremo derecho
+            if (valIzq === extremoDerecho) {
+                // Crea la ficha en formato grande para el tablero
+                crearFichaEnTablero(valIzq, valDer, txtIzq, txtDer, false);
+                extremoDerecho = valDer; // Actualiza el nuevo extremo derecho
+                fichaElemento.remove();   // Quita la ficha de la mano
+                msgDiv.style.color = "#27ae60";
+                msgDiv.innerText = "¡Conexión correcta! El discurso colectivo avanza.";
+            } 
+            // Validamos si conecta de forma invertida por el extremo derecho
+            else if (valDer === extremoDerecho) {
+                crearFichaEnTablero(valDer, valIzq, txtDer, txtIzq, false);
+                extremoDerecho = valIzq;
+                fichaElemento.remove();
+                msgDiv.style.color = "#27ae60";
+                msgDiv.innerText = "¡Conexión correcta! El discurso colectivo avanza.";
+            }
+            // Si no coincide con las reglas
+            else {
+                msgDiv.style.color = "#ff4d4d";
+                msgDiv.innerText = "Movimiento inválido. Los temas o números no coinciden.";
+            }
+        }
+
+        // Función auxiliar que dibuja la ficha grande dinámicamente en la mesa
+        function crearFichaEnTablero(izq, der, txtI, txtD, alInicio) {
+            const tablero = document.getElementById("tablero");
+            
+            const nuevaFicha = document.createElement("div");
+            nuevaFicha.className = "ficha-tablero";
+            
+            nuevaFicha.innerHTML = `
+                <div class="lado color-${izq}">
+                    <span>${txtI}</span>
+                    <span class="numero">[${izq}]</span>
+                </div>
+                <div class="lado lado-der color-${der}">
+                    <span>${txtD}</span>
+                    <span class="numero">[${der}]</span>
+                </div>
+            `;
+            
+            tablero.appendChild(nuevaFicha);
+        }
+    </script>
 </body>
 </html>
