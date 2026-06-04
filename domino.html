@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dominó Digital Interactivo - Humanidades</title>
+    <title>Dominó Digital Interactivo - Humanidades Clásico</title>
     <style>
         :root {
             --bg-color: #1e1e24;
@@ -17,16 +17,84 @@
             background-color: var(--bg-color);
             color: #fff;
             margin: 0;
-            padding: 20px;
+            padding: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
             user-select: none;
             overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* --- PANTALLA DE MENÚ --- */
+        .overlay-menu {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, #1a1a2e 0%, #16213e 100%);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 1000;
+            transition: opacity 0.5s ease;
+        }
+
+        .contenido-menu {
+            text-align: center;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .selector-dificultad {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 25px 0;
+        }
+
+        .btn-dif {
+            padding: 10px 20px;
+            border: 2px solid var(--accent-color);
+            background: transparent;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: bold;
+        }
+
+        .btn-dif:hover, .btn-dif.seleccionado {
+            background: var(--accent-color);
+            box-shadow: 0 0 15px rgba(77, 166, 255, 0.4);
+        }
+
+        .boton-jugar {
+            padding: 15px 45px;
+            font-size: 1.2rem;
+            background: var(--success-color);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .boton-jugar:hover { transform: scale(1.05); background: #2ecc71; }
+
+        /* --- INTERFAZ DEL JUEGO --- */
+        #interfaz-juego {
+            display: none;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
         }
 
         h1 {
             color: var(--accent-color);
+            margin-top: 0;
             margin-bottom: 5px;
             text-align: center;
             text-transform: uppercase;
@@ -40,7 +108,6 @@
             font-size: 1.1rem;
         }
 
-        /* --- MENSAJES DEL ÁRBITRO --- */
         #mensaje {
             height: 30px;
             color: var(--accent-color);
@@ -61,15 +128,15 @@
             min-height: 200px;
             padding: 30px;
             display: flex;
-            justify-content: flex-start; /* Crece hacia la derecha */
+            justify-content: center; /* Centrado para crecer a ambos lados */
             align-items: center;
             gap: 15px;
             margin-bottom: 30px;
-            overflow-x: auto; /* Scroll horizontal si hay muchas piezas */
+            overflow-x: auto;
             box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
         }
 
-        /* --- FICHAS EN EL TABLERO (Grandes) --- */
+        /* --- FICHAS --- */
         .ficha-tablero {
             display: flex;
             width: 260px;
@@ -77,7 +144,7 @@
             border: 3px solid #000;
             border-radius: 8px;
             overflow: hidden;
-            flex-shrink: 0; /* Evita que se encojan */
+            flex-shrink: 0;
             box-shadow: 0 6px 12px rgba(0,0,0,0.4);
             animation: aparecer 0.3s ease-out;
         }
@@ -100,6 +167,7 @@
             text-align: center;
             line-height: 1.3;
             position: relative;
+            transition: background-color 0.5s;
         }
 
         .lado-der { border-left: 3px solid #000; }
@@ -144,7 +212,6 @@
             align-items: center;
         }
 
-        /* --- FICHAS EN LA MANO (Arrastrables) --- */
         .ficha-mano {
             display: flex;
             width: 200px;
@@ -177,80 +244,141 @@
             padding: 8px;
             text-align: center;
             line-height: 1.2;
+            transition: background-color 0.5s;
         }
 
-        /* --- COLORES TEMÁTICOS ORIGINALES --- */
-        .color-0 { background-color: #34495e; } /* Inicio/Fin */
-        .color-1 { background-color: #d9383a; } /* Rojo: Racismo */
-        .color-3 { background-color: #27ae60; } /* Verde: Hermenéutica */
-        .color-4 { background-color: #f1c40f; color: #000; } /* Amarillo: Parresía */
-        .color-6 { background-color: #8e44ad; } /* Morado: Prospectiva */
+        /* --- COLORES TEMÁTICOS --- */
+        .color-1 { background-color: #d9383a; } /* Racismo */
+        .color-3 { background-color: #27ae60; } /* Hermenéutica */
+        .color-4 { background-color: #f1c40f; color: #000; } /* Parresía */
+        .color-6 { background-color: #8e44ad; } /* Prospectiva */
+
+        /* =========================================
+           SISTEMA DE DIFICULTADES MEDIO Y DIFÍCIL
+           ========================================= */
+        
+        /* MEDIO: Ocultar números */
+        body.dificultad-medio .numero,
+        body.dificultad-medio .tipo-texto-num { 
+            display: none !important; 
+        }
+
+        /* DIFÍCIL: Ocultar números y unificar colores a gris oscuro */
+        body.dificultad-dificil .numero,
+        body.dificultad-dificil .tipo-texto-num { 
+            display: none !important; 
+        }
+        body.dificultad-dificil .lado,
+        body.dificultad-dificil .lado-mini {
+            background-color: #34495e !important;
+            color: #fff !important;
+        }
 
     </style>
 </head>
 <body>
 
-    <h1>DOMINÓ DIGITAL INTERACTIVO</h1>
-    <div class="sub">Módulo 3: La experiencia de sí mismo en el discurso colectivo</div>
-    
-    <div id="mensaje">Arrastra la ficha que responde a la pregunta del tablero</div>
+    <div id="pantalla-inicio" class="overlay-menu">
+        <div class="contenido-menu">
+            <h1 style="font-size: 2.5rem;">DOMINÓ: DISCURSO COLECTIVO</h1>
+            <p>Conecta las ideas por la izquierda o la derecha. Selecciona tu nivel:</p>
+            
+            <div class="selector-dificultad">
+                <button onclick="seleccionarDificultad('facil', this)" class="btn-dif">FÁCIL (Pistas)</button>
+                <button onclick="seleccionarDificultad('medio', this)" class="btn-dif">MEDIO (Sin Números)</button>
+                <button onclick="seleccionarDificultad('dificil', this)" class="btn-dif">DIFÍCIL (Sin Colores)</button>
+            </div>
 
-    <div class="tablero-contenedor" id="tablero" ondragover="permitirSoltar(event)" ondrop="soltarFicha(event)">
-        <div class="ficha-tablero" id="ficha-inicio">
-            <div class="lado color-0">
-                <span class="tipo-texto">INICIO</span>
-                <span>Punto de partida</span>
-            </div>
-            <div class="lado lado-der color-1">
-                <span class="tipo-texto">Pregunta</span>
-                <span>¿Qué es el racismo sutil en el lenguaje?</span>
-                <span class="numero">[1]</span>
-            </div>
+            <button id="btn-iniciar" onclick="iniciarJuego()" class="boton-jugar" style="display:none;">
+                COMENZAR
+            </button>
         </div>
     </div>
 
-    <div class="mano-jugador">
-        <h3 style="margin-top: 0; color: #aaa;">Tu Mano de Fichas (Desordenadas)</h3>
-        <div class="mis-fichas" id="mano">
-            
-            <div class="ficha-mano" id="ficha3" draggable="true" ondragstart="arrastrarFicha(event)" 
-                 data-izq="4" data-der="6" data-tipo-izq="Respuesta" data-tipo-der="Pregunta"
-                 data-txt-izq="Decir la verdad de frente asumiendo riesgos." 
-                 data-txt-der="¿Qué propone la prospectiva social?">
-                <div class="lado-mini color-4"><span class="tipo-texto">Resp [4]</span><span>Decir la verdad de frente.</span></div>
-                <div class="lado-mini color-6" style="border-left: 2px solid #000;"><span class="tipo-texto">Preg [6]</span><span>¿Qué propone la prospectiva?</span></div>
-            </div>
+    <div id="interfaz-juego">
+        <h1>DOMINÓ CLÁSICO INTERACTIVO</h1>
+        <div class="sub">Módulo 3: Conecta los extremos del discurso</div>
+        
+        <div id="mensaje">Arrastra una ficha y conéctala a cualquier extremo válido.</div>
 
-            <div class="ficha-mano" id="ficha1" draggable="true" ondragstart="arrastrarFicha(event)" 
-                 data-izq="1" data-der="3" data-tipo-izq="Respuesta" data-tipo-der="Pregunta"
-                 data-txt-izq="Microagresiones invisibles en lo cotidiano." 
-                 data-txt-der="¿En qué consiste la hermenéutica del sujeto?">
-                <div class="lado-mini color-1"><span class="tipo-texto">Resp [1]</span><span>Microagresiones invisibles.</span></div>
-                <div class="lado-mini color-3" style="border-left: 2px solid #000;"><span class="tipo-texto">Preg [3]</span><span>¿Qué es la hermenéutica?</span></div>
+        <div class="tablero-contenedor" id="tablero" ondragover="permitirSoltar(event)" ondrop="soltarFicha(event)">
+            <div class="ficha-tablero" id="ficha-inicio">
+                <div class="lado color-3">
+                    <span class="tipo-texto">Pregunta</span>
+                    <span>¿Qué es la hermenéutica?</span>
+                    <span class="numero">[3]</span>
+                </div>
+                <div class="lado lado-der color-3">
+                    <span class="tipo-texto">Respuesta</span>
+                    <span>El auto-examen consciente.</span>
+                    <span class="numero">[3]</span>
+                </div>
             </div>
+        </div>
 
-            <div class="ficha-mano" id="ficha4" draggable="true" ondragstart="arrastrarFicha(event)" 
-                 data-izq="6" data-der="0" data-tipo-izq="Respuesta" data-tipo-der="FIN"
-                 data-txt-izq="Construir activamente un futuro común." 
-                 data-txt-der="¡Discurso completado con éxito!">
-                <div class="lado-mini color-6"><span class="tipo-texto">Resp [6]</span><span>Construir un futuro común.</span></div>
-                <div class="lado-mini color-0" style="border-left: 2px solid #000;"><span class="tipo-texto">META [0]</span><span>¡Completado!</span></div>
+        <div class="mano-jugador">
+            <h3 style="margin-top: 0; color: #aaa;">Tu Mano de Fichas</h3>
+            <div class="mis-fichas" id="mano">
+                
+                <div class="ficha-mano" id="f1" draggable="true" ondragstart="arrastrarFicha(event)" 
+                     data-izq="3" data-der="1" data-tipo-izq="Respuesta" data-tipo-der="Pregunta"
+                     data-txt-izq="Auto-examen crítico." 
+                     data-txt-der="¿Qué es el racismo sutil?">
+                    <div class="lado-mini color-3"><span class="tipo-texto-num">Resp [3]</span><span>Auto-examen crítico.</span></div>
+                    <div class="lado-mini color-1" style="border-left: 2px solid #000;"><span class="tipo-texto-num">Preg [1]</span><span>¿Qué es el racismo sutil?</span></div>
+                </div>
+
+                <div class="ficha-mano" id="f2" draggable="true" ondragstart="arrastrarFicha(event)" 
+                     data-izq="1" data-der="4" data-tipo-izq="Respuesta" data-tipo-der="Pregunta"
+                     data-txt-izq="Microagresiones diarias." 
+                     data-txt-der="¿Qué significa parresía?">
+                    <div class="lado-mini color-1"><span class="tipo-texto-num">Resp [1]</span><span>Microagresiones diarias.</span></div>
+                    <div class="lado-mini color-4" style="border-left: 2px solid #000;"><span class="tipo-texto-num">Preg [4]</span><span>¿Qué significa parresía?</span></div>
+                </div>
+
+                <div class="ficha-mano" id="f3" draggable="true" ondragstart="arrastrarFicha(event)" 
+                     data-izq="4" data-der="6" data-tipo-izq="Respuesta" data-tipo-der="Pregunta"
+                     data-txt-izq="Hablar con la verdad." 
+                     data-txt-der="¿Qué es la prospectiva?">
+                    <div class="lado-mini color-4"><span class="tipo-texto-num">Resp [4]</span><span>Hablar con la verdad.</span></div>
+                    <div class="lado-mini color-6" style="border-left: 2px solid #000;"><span class="tipo-texto-num">Preg [6]</span><span>¿Qué es la prospectiva?</span></div>
+                </div>
+
+                <div class="ficha-mano" id="f4" draggable="true" ondragstart="arrastrarFicha(event)" 
+                     data-izq="3" data-der="6" data-tipo-izq="Pregunta" data-tipo-der="Respuesta"
+                     data-txt-izq="¿Cómo iniciar el examen?" 
+                     data-txt-der="Pensando el futuro común.">
+                    <div class="lado-mini color-3"><span class="tipo-texto-num">Preg [3]</span><span>¿Cómo iniciar el examen?</span></div>
+                    <div class="lado-mini color-6" style="border-left: 2px solid #000;"><span class="tipo-texto-num">Resp [6]</span><span>Pensando el futuro común.</span></div>
+                </div>
+
             </div>
-
-            <div class="ficha-mano" id="ficha2" draggable="true" ondragstart="arrastrarFicha(event)" 
-                 data-izq="3" data-der="4" data-tipo-izq="Respuesta" data-tipo-der="Pregunta"
-                 data-txt-izq="El auto-examen consciente y crítico." 
-                 data-txt-der="¿Cuál es el significado de la parresía?">
-                <div class="lado-mini color-3"><span class="tipo-texto">Resp [3]</span><span>El auto-examen consciente.</span></div>
-                <div class="lado-mini color-4" style="border-left: 2px solid #000;"><span class="tipo-texto">Preg [4]</span><span>¿Qué es la parresía?</span></div>
-            </div>
-
         </div>
     </div>
 
     <script>
-        // El extremo derecho actual del tablero (Inicia pidiendo la respuesta [1])
-        let extremoDerecho = 1;
+        // Variables globales del tablero bidireccional
+        let extremoIzqTablero = 3; 
+        let extremoDerTablero = 3;
+        let dificultadSeleccionada = "facil";
+
+        function seleccionarDificultad(nivel, elemento) {
+            dificultadSeleccionada = nivel;
+            document.querySelectorAll('.btn-dif').forEach(btn => btn.classList.remove('seleccionado'));
+            elemento.classList.add('seleccionado');
+            document.getElementById("btn-iniciar").style.display = "inline-block";
+        }
+
+        function iniciarJuego() {
+            // Aplicar clase al body para el CSS dinámico
+            document.body.classList.add('dificultad-' + dificultadSeleccionada);
+            
+            document.getElementById("pantalla-inicio").style.opacity = "0";
+            setTimeout(() => {
+                document.getElementById("pantalla-inicio").style.display = "none";
+                document.getElementById("interfaz-juego").style.display = "flex";
+            }, 500);
+        }
 
         function permitirSoltar(event) {
             event.preventDefault(); 
@@ -259,17 +387,15 @@
         function arrastrarFicha(event) {
             event.dataTransfer.setData("text/plain", event.target.id);
             document.getElementById("mensaje").style.color = "var(--accent-color)";
-            document.getElementById("mensaje").innerText = "Analizando conexión...";
+            document.getElementById("mensaje").innerText = "Analizando extremos disponibles...";
         }
 
         function soltarFicha(event) {
             event.preventDefault();
             const idFicha = event.dataTransfer.getData("text/plain");
             const fichaElemento = document.getElementById(idFicha);
-            
             if (!fichaElemento) return;
 
-            // Extraemos la información de la ficha jugada
             const valIzq = parseInt(fichaElemento.getAttribute("data-izq"));
             const valDer = parseInt(fichaElemento.getAttribute("data-der"));
             const txtIzq = fichaElemento.getAttribute("data-txt-izq");
@@ -278,44 +404,50 @@
             const tipoDer = fichaElemento.getAttribute("data-tipo-der");
 
             const msgDiv = document.getElementById("mensaje");
-
-            // Lógica 1: Encaja de forma directa
-            if (valIzq === extremoDerecho) {
-                crearFichaEnTablero(valIzq, valDer, tipoIzq, tipoDer, txtIzq, txtDer);
-                extremoDerecho = valDer; 
-                fichaElemento.remove(); 
-                evaluarVictoria(extremoDerecho, msgDiv);
-            } 
-            // Lógica 2: Encaja pero la ficha está volteada
-            else if (valDer === extremoDerecho) {
-                crearFichaEnTablero(valDer, valIzq, tipoDer, tipoIzq, txtDer, txtIzq);
-                extremoDerecho = valIzq;
-                fichaElemento.remove();
-                evaluarVictoria(extremoDerecho, msgDiv);
-            }
-            // Error: No encaja
-            else {
-                msgDiv.style.color = "var(--error-color)";
-                msgDiv.innerText = "❌ Movimiento inválido. La respuesta no corresponde a la pregunta.";
-            }
-        }
-
-        function evaluarVictoria(extremo, msgDiv) {
-            if(extremo === 0) {
-                msgDiv.style.color = "var(--accent-color)";
-                msgDiv.innerText = "🏆 ¡Felicidades! Has reconstruido todo el discurso colectivo.";
-                document.getElementById("tablero").style.borderColor = "var(--success-color)";
-            } else {
-                msgDiv.style.color = "var(--success-color)";
-                msgDiv.innerText = "✅ ¡Conexión correcta! El discurso avanza.";
-            }
-            
-            // Hacer scroll automático hacia la derecha al poner una ficha
             const tablero = document.getElementById("tablero");
-            tablero.scrollLeft = tablero.scrollWidth;
+
+            let fichaColocada = false;
+
+            // 1. INTENTAR CONECTAR POR LA DERECHA DEL TABLERO
+            if (valIzq === extremoDerTablero) {
+                crearFichaEnTablero(valIzq, valDer, tipoIzq, tipoDer, txtIzq, txtDer, 'append');
+                extremoDerTablero = valDer; 
+                fichaColocada = true;
+            } else if (valDer === extremoDerTablero) {
+                crearFichaEnTablero(valDer, valIzq, tipoDer, tipoIzq, txtDer, txtIzq, 'append');
+                extremoDerTablero = valIzq;
+                fichaColocada = true;
+            }
+            // 2. INTENTAR CONECTAR POR LA IZQUIERDA DEL TABLERO
+            else if (valDer === extremoIzqTablero) {
+                crearFichaEnTablero(valIzq, valDer, tipoIzq, tipoDer, txtIzq, txtDer, 'prepend');
+                extremoIzqTablero = valIzq;
+                fichaColocada = true;
+            } else if (valIzq === extremoIzqTablero) {
+                crearFichaEnTablero(valDer, valIzq, tipoDer, tipoIzq, txtDer, txtIzq, 'prepend');
+                extremoIzqTablero = valDer;
+                fichaColocada = true;
+            }
+
+            if (fichaColocada) {
+                fichaElemento.remove(); 
+                msgDiv.style.color = "var(--success-color)";
+                msgDiv.innerText = "¡Excelente jugada! Continúa construyendo.";
+                
+                // Verificar si ganó (se quedó sin fichas)
+                if(document.getElementById("mano").children.length === 0) {
+                    msgDiv.style.color = "var(--accent-color)";
+                    msgDiv.innerText = "🏆 ¡Felicidades! Has vaciado tu mano y conectado todo el discurso.";
+                    tablero.style.borderColor = "var(--success-color)";
+                }
+            } else {
+                msgDiv.style.color = "var(--error-color)";
+                msgDiv.innerText = "❌ Movimiento inválido. Ningún extremo coincide con la mesa.";
+            }
         }
 
-        function crearFichaEnTablero(izq, der, tipoI, tipoD, txtI, txtD) {
+        // Función que renderiza la ficha y la coloca al inicio (prepend) o final (append)
+        function crearFichaEnTablero(izq, der, tipoI, tipoD, txtI, txtD, posicion) {
             const tablero = document.getElementById("tablero");
             const nuevaFicha = document.createElement("div");
             nuevaFicha.className = "ficha-tablero";
@@ -329,11 +461,18 @@
                 <div class="lado lado-der color-${der}">
                     <span class="tipo-texto">${tipoD}</span>
                     <span>${txtD}</span>
+
                     <span class="numero">[${der}]</span>
                 </div>
             `;
             
-            tablero.appendChild(nuevaFicha);
+            if (posicion === 'append') {
+                tablero.appendChild(nuevaFicha);
+                tablero.scrollLeft = tablero.scrollWidth; // Auto-scroll a la derecha
+            } else {
+                tablero.insertBefore(nuevaFicha, tablero.firstChild);
+                tablero.scrollLeft = 0; // Auto-scroll a la izquierda
+            }
         }
     </script>
 </body>
