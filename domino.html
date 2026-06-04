@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+                            <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -82,6 +82,24 @@
 
         .boton-jugar:hover { transform: scale(1.05); background: #2ecc71; }
 
+        /* --- BOTÓN REGRESAR AL MENÚ --- */
+        .btn-regresar {
+            padding: 8px 18px;
+            background-color: #34495e;
+            color: #fff;
+            border: 1px solid #7f8c8d;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s, border-color 0.2s;
+            margin-bottom: 15px;
+        }
+
+        .btn-regresar:hover {
+            background-color: #2c3e50;
+            border-color: var(--accent-color);
+        }
+
         /* --- INTERFAZ DEL JUEGO --- */
         #interfaz-juego {
             display: none;
@@ -128,7 +146,7 @@
             min-height: 200px;
             padding: 30px;
             display: flex;
-            justify-content: center; /* Centrado para crecer a ambos lados */
+            justify-content: center;
             align-items: center;
             gap: 15px;
             margin-bottom: 30px;
@@ -247,23 +265,25 @@
             transition: background-color 0.5s;
         }
 
-        /* --- COLORES TEMÁTICOS --- */
+        /* --- COLORES TEMÁTICOS ORIGINALES --- */
         .color-1 { background-color: #d9383a; } /* Racismo */
         .color-3 { background-color: #27ae60; } /* Hermenéutica */
         .color-4 { background-color: #f1c40f; color: #000; } /* Parresía */
         .color-6 { background-color: #8e44ad; } /* Prospectiva */
 
         /* =========================================
-           SISTEMA DE DIFICULTADES MEDIO Y DIFÍCIL
+           SISTEMA DE DIFICULTADES DINÁMICAS
            ========================================= */
         
-        /* MEDIO: Ocultar números */
+        /* FÁCIL: Muestra todo de forma regular */
+
+        /* MEDIO: Ocultar los números guía */
         body.dificultad-medio .numero,
         body.dificultad-medio .tipo-texto-num { 
             display: none !important; 
         }
 
-        /* DIFÍCIL: Ocultar números y unificar colores a gris oscuro */
+        /* DIFÍCIL: Ocultar números y unificar fondos a gris oscuro */
         body.dificultad-dificil .numero,
         body.dificultad-dificil .tipo-texto-num { 
             display: none !important; 
@@ -281,7 +301,7 @@
     <div id="pantalla-inicio" class="overlay-menu">
         <div class="contenido-menu">
             <h1 style="font-size: 2.5rem;">DOMINÓ: DISCURSO COLECTIVO</h1>
-            <p>Conecta las ideas por la izquierda o la derecha. Selecciona tu nivel:</p>
+            <p>Conecta las ideas por la izquierda o la derecha. Selecciona tu nivel[cite: 66]:</p>
             
             <div class="selector-dificultad">
                 <button onclick="seleccionarDificultad('facil', this)" class="btn-dif">FÁCIL (Pistas)</button>
@@ -296,8 +316,10 @@
     </div>
 
     <div id="interfaz-juego">
+        <button onclick="regresarAlMenu()" class="btn-regresar">⬅ Regresar al Menú</button>
+
         <h1>DOMINÓ CLÁSICO INTERACTIVO</h1>
-        <div class="sub">Módulo 3: Conecta los extremos del discurso</div>
+        <div class="sub">Módulo 3: Conecta los extremos del discurso [cite: 51]</div>
         
         <div id="mensaje">Arrastra una ficha y conéctala a cualquier extremo válido.</div>
 
@@ -357,10 +379,14 @@
     </div>
 
     <script>
-        // Variables globales del tablero bidireccional
+        // Variables de control del tablero
         let extremoIzqTablero = 3; 
         let extremoDerTablero = 3;
         let dificultadSeleccionada = "facil";
+
+        // Respaldamos el HTML de inicio para poder reiniciar el juego infinitamente
+        const copiaTableroOriginal = document.getElementById("tablero").innerHTML;
+        const copiaManoOriginal = document.getElementById("mano").innerHTML;
 
         function seleccionarDificultad(nivel, elemento) {
             dificultadSeleccionada = nivel;
@@ -370,7 +396,7 @@
         }
 
         function iniciarJuego() {
-            // Aplicar clase al body para el CSS dinámico
+            // Asignar clase de dificultad al body para que actúe el CSS [cite: 67]
             document.body.classList.add('dificultad-' + dificultadSeleccionada);
             
             document.getElementById("pantalla-inicio").style.opacity = "0";
@@ -378,6 +404,33 @@
                 document.getElementById("pantalla-inicio").style.display = "none";
                 document.getElementById("interfaz-juego").style.display = "flex";
             }, 500);
+        }
+
+        function regresarAlMenu() {
+            // 1. Restaurar valores lógicos por defecto
+            extremoIzqTablero = 3;
+            extremoDerTablero = 3;
+
+            // 2. Remover todas las clases CSS de dificultad asignadas al body
+            document.body.classList.remove('dificultad-facil', 'dificultad-medio', 'dificultad-dificil');
+
+            // 3. Reestablecer el HTML original de la mesa y de la mano del jugador
+            document.getElementById("tablero").innerHTML = copiaTableroOriginal;
+            document.getElementById("mano").innerHTML = copiaManoOriginal;
+
+            // 4. Restaurar mensajes informativos y bordes por defecto
+            const msgDiv = document.getElementById("mensaje");
+            msgDiv.style.color = "var(--accent-color)";
+            msgDiv.innerText = "Arrastra una ficha y conéctala a cualquier extremo válido.";
+            document.getElementById("tablero").style.borderColor = "var(--accent-color)";
+
+            // 5. Ocultar el tablero y volver a mostrar la pantalla del menú principal
+            document.getElementById("interfaz-juego").style.display = "none";
+            const pantallaMenu = document.getElementById("pantalla-inicio");
+            pantallaMenu.style.display = "flex";
+            setTimeout(() => {
+                pantallaMenu.style.opacity = "1";
+            }, 50);
         }
 
         function permitirSoltar(event) {
@@ -408,7 +461,7 @@
 
             let fichaColocada = false;
 
-            // 1. INTENTAR CONECTAR POR LA DERECHA DEL TABLERO
+            // 1. CONEXIÓN POR EL EXTREMO DERECHO DEL TABLERO [cite: 66]
             if (valIzq === extremoDerTablero) {
                 crearFichaEnTablero(valIzq, valDer, tipoIzq, tipoDer, txtIzq, txtDer, 'append');
                 extremoDerTablero = valDer; 
@@ -418,7 +471,7 @@
                 extremoDerTablero = valIzq;
                 fichaColocada = true;
             }
-            // 2. INTENTAR CONECTAR POR LA IZQUIERDA DEL TABLERO
+            // 2. CONEXIÓN POR EL EXTREMO IZQUIERDO DEL TABLERO [cite: 66]
             else if (valDer === extremoIzqTablero) {
                 crearFichaEnTablero(valIzq, valDer, tipoIzq, tipoDer, txtIzq, txtDer, 'prepend');
                 extremoIzqTablero = valIzq;
@@ -434,7 +487,7 @@
                 msgDiv.style.color = "var(--success-color)";
                 msgDiv.innerText = "¡Excelente jugada! Continúa construyendo.";
                 
-                // Verificar si ganó (se quedó sin fichas)
+                // Evaluar si el jugador se quedó sin fichas en la mano (Victoria)
                 if(document.getElementById("mano").children.length === 0) {
                     msgDiv.style.color = "var(--accent-color)";
                     msgDiv.innerText = "🏆 ¡Felicidades! Has vaciado tu mano y conectado todo el discurso.";
@@ -446,7 +499,6 @@
             }
         }
 
-        // Función que renderiza la ficha y la coloca al inicio (prepend) o final (append)
         function crearFichaEnTablero(izq, der, tipoI, tipoD, txtI, txtD, posicion) {
             const tablero = document.getElementById("tablero");
             const nuevaFicha = document.createElement("div");
@@ -461,17 +513,21 @@
                 <div class="lado lado-der color-${der}">
                     <span class="tipo-texto">${tipoD}</span>
                     <span>${txtD}</span>
-
+                    <span class="numero">[${izq}]</span>
+                </div>
+                <div class="lado lado-der color-${der}">
+                    <span class="tipo-texto">${tipoD}</span>
+                    <span>${txtD}</span>
                     <span class="numero">[${der}]</span>
                 </div>
             `;
             
             if (posicion === 'append') {
                 tablero.appendChild(nuevaFicha);
-                tablero.scrollLeft = tablero.scrollWidth; // Auto-scroll a la derecha
+                tablero.scrollLeft = tablero.scrollWidth; 
             } else {
                 tablero.insertBefore(nuevaFicha, tablero.firstChild);
-                tablero.scrollLeft = 0; // Auto-scroll a la izquierda
+                tablero.scrollLeft = 0; 
             }
         }
     </script>
