@@ -3,35 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dominó Temático Premium: Discurso Colectivo</title>
+    <title>Dominó Temático Premium - Módulo Humanidades</title>
     <style>
         :root {
-            --bg-color: #12121e; /* Fondo ligeramente más oscuro */
+            --bg-color: #121216;
             --accent-color: #4da6ff;
             --success-color: #27ae60;
             --error-color: #ff4d4d;
             
-            /* Nuevas definiciones de colores con profundidad */
-            --tile-bg-facade: rgba(255,255,255,0.05);
-            --color-1-grad: linear-gradient(135deg, #3498db, #2980b9);
-            --color-2-grad: linear-gradient(135deg, #9b59b6, #8e44ad);
-            --color-3-grad: linear-gradient(135deg, #e67e22, #d35400);
-            --color-4-grad: linear-gradient(135deg, #f1c40f, #f39c12);
+            /* Paleta de colores Premium con degradados de profundidad */
+            --color-1-grad: linear-gradient(135deg, #d9383a, #962d2f); /* Racismo */
+            --color-3-grad: linear-gradient(135deg, #27ae60, #1e7e43); /* Hermenéutica */
+            --color-4-grad: linear-gradient(135deg, #f1c40f, #f39c12); /* Parresía */
+            --color-6-grad: linear-gradient(135deg, #8e44ad, #6c3483); /* Prospectiva */
         }
 
         body {
-            margin: 0;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-color);
-            color: white;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            user-select: none;
             overflow-x: hidden;
+            min-height: 100vh;
         }
 
-        /* --- PANTALLA DE MENÚ (Sin cambios estructurales) --- */
+        /* --- PANTALLA DE MENÚ --- */
         .overlay-menu {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, #1a1a2e 0%, #10101a 100%);
+            background: radial-gradient(circle, #1a1a2e 0%, #101017 100%);
             display: flex; justify-content: center; align-items: center;
             z-index: 1000;
             transition: opacity 0.5s ease;
@@ -42,9 +47,9 @@
             padding: 40px;
             background: rgba(255, 255, 255, 0.03);
             border-radius: 20px;
-            backdrop-filter: blur(15px);
+            backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
         }
 
         .selector-dificultad {
@@ -59,7 +64,7 @@
             border: 2px solid var(--accent-color);
             background: transparent;
             color: white;
-            border-radius: 30px; /* Bordes más redondeados */
+            border-radius: 30px;
             cursor: pointer;
             transition: all 0.3s ease;
             font-weight: bold;
@@ -69,11 +74,11 @@
 
         .btn-dif:hover, .btn-dif.seleccionado {
             background: var(--accent-color);
-            box-shadow: 0 0 20px rgba(77, 166, 255, 0.5);
+            box-shadow: 0 0 15px rgba(77, 166, 255, 0.5);
         }
 
         .boton-jugar {
-            padding: 15px 50px;
+            padding: 15px 45px;
             font-size: 1.2rem;
             background: var(--success-color);
             color: white;
@@ -81,345 +86,502 @@
             border-radius: 30px;
             cursor: pointer;
             font-weight: bold;
-            transition: all 0.2s ease;
+            transition: transform 0.2s, background 0.2s;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
-        .boton-jugar:hover { transform: scale(1.05); background: #2ecc71; box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4); }
+        .boton-jugar:hover { transform: scale(1.05); background: #2ecc71; }
 
-        /* --- INTERFAZ DE JUEGO (Sin cambios estructurales) --- */
-        #contenedor-juego {
-            padding: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
+        .btn-regresar {
+            padding: 8px 18px;
+            background-color: #2c3e50;
+            color: #fff;
+            border: 1px solid #7f8c8d;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+            margin-bottom: 15px;
         }
+        .btn-regresar:hover { background-color: #1a252f; border-color: var(--accent-color); }
+
+        /* --- INTERFAZ DEL JUEGO --- */
+        #interfaz-juego {
+            display: none;
+            width: 100%;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+        }
+
+        h1 {
+            color: var(--accent-color);
+            margin: 0 0 5px 0;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .sub { color: #aaa; margin-bottom: 20px; text-align: center; font-size: 1.1rem; }
 
         #mensaje {
-            height: 35px;
-            text-align: center;
-            font-weight: bold;
-            margin-bottom: 15px;
+            height: 30px;
             color: var(--accent-color);
-            font-size: 1.1rem;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            text-align: center;
         }
 
-        #tablero {
-            /* Ajustes estructurales respetados y la alineación vertical con la altura mínima */
+        /* --- TABLERO (ALINEACIÓN SEGURA) --- */
+        .tablero-contenedor {
+            width: 95%;
+            max-width: 1200px;
+            background-color: #1a1a24;
+            border: 2px dashed var(--accent-color);
+            border-radius: 16px;
+            min-height: 220px;
+            padding: 35px;
             display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-            margin-top: 15px;
-            min-height: 90px;
+            justify-content: flex-start; 
             align-items: center;
-            justify-content: center;
-            padding: 40px;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 20px;
-            border: 2px dashed rgba(255, 255, 255, 0.08);
-            box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
+            gap: 25px;
+            margin-bottom: 30px;
+            overflow-x: auto;
+            box-shadow: inset 0 0 25px rgba(0,0,0,0.6);
+            scroll-behavior: smooth;
+            box-sizing: border-box;
         }
 
         /* =========================================
-           NUEVO DISEÑO PREMIUM DE FICHAS (TÁCTIL)
+           DISEÑO PREMIUM REALISTA DE LAS FICHAS
            ========================================= */
-        
-        /* Contenedor base de la ficha (Común) */
         .ficha-base {
             display: flex;
-            border-radius: 12px; /* Esquinas suavizadas */
+            border-radius: 12px;
             overflow: hidden;
-            position: relative; /* Para el divisor central */
+            flex-shrink: 0;
+            position: relative;
             box-sizing: border-box;
-            
-            /* Efecto de grosor y biselado (esqueumorfismo sutil) */
             border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 
-                0 6px 12px rgba(0,0,0,0.5), /* Sombra proyectada */
-                inset 0 1px 1px rgba(255,255,255,0.1); /* Brillo en borde superior */
+            box-shadow: 0 8px 16px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.15);
         }
 
-        /* Ranura central realista */
+        /* Ranura central realista de dominó */
         .ficha-base::after {
             content: "";
             position: absolute;
-            top: 10%;
-            left: 50%;
+            top: 0; left: 50%;
             transform: translateX(-50%);
-            width: 2px;
-            height: 80%;
-            background: rgba(0, 0, 0, 0.3);
-            box-shadow: 
-                -1px 0 0 rgba(255,255,255,0.05),
-                1px 0 0 rgba(255,255,255,0.05);
-            z-index: 2;
+            width: 2px; height: 100%;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.9) 50%, rgba(0,0,0,0.4) 100%);
+            z-index: 5;
+        }
+        
+        /* Perno/Remache central metálico */
+        .ficha-base::before {
+            content: "";
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 7px; height: 7px;
+            background: #f1c40f;
+            border: 2px solid #000;
+            border-radius: 50%;
+            z-index: 6;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.5);
         }
 
-        /* Estilos específicos para Fichas del Tablero */
         .ficha-tablero {
-            composes: ficha-base;
-            display: flex; /* Reset composes if needed, standardizing on flex */
+            /* Extiende ficha-base de manera segura */
+            display: flex;
             border-radius: 12px;
             overflow: hidden;
+            flex-shrink: 0;
             position: relative;
             box-sizing: border-box;
             border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.1);
-            
-            width: 170px; /* Ligeramente más grande */
-            height: 85px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.15);
+            width: 270px;
+            height: 120px;
+            animation: aparecer 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) ease-out;
         }
 
-        /* Estilos específicos para Fichas de la Mano */
         .ficha-mano {
-            composes: ficha-base;
-            display: flex; /* Reset composes if needed, standardizing on flex */
+            /* Extiende ficha-base de manera segura */
+            display: flex;
             border-radius: 12px;
             overflow: hidden;
+            flex-shrink: 0;
             position: relative;
             box-sizing: border-box;
             border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.1);
-
-            width: 160px;
-            height: 80px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.15);
+            width: 250px;
+            height: 110px;
             cursor: grab;
-            transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+            transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.25s ease;
         }
-
         .ficha-mano:active { cursor: grabbing; }
-
-        /* Efecto de elevación e iluminación al hacer hover en la mano */
         .ficha-mano:hover {
-            transform: scale(1.05) translateY(-5px);
-            box-shadow: 
-                0 15px 25px rgba(0,0,0,0.6), 
-                0 0 15px rgba(77, 166, 255, 0.3);
-            filter: brightness(1.1);
+            transform: scale(1.05) translateY(-6px);
+            box-shadow: 0 15px 25px rgba(0,0,0,0.6), 0 0 12px rgba(77, 166, 255, 0.3);
         }
 
-        /* Diseño de los lados de la ficha */
+        @keyframes aparecer {
+            from { opacity: 0; transform: scale(0.85); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* --- LADOS INTERNOS BLOQUEADOS DE FORMA ESTRICTA (50/50) --- */
         .lado {
-            flex: 1;
+            flex: 1 1 50%;
+            min-width: 0;
+            box-sizing: border-box;
+            padding: 12px 10px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
-            padding: 10px;
+            font-size: 0.8rem;
+            color: #fff;
             text-align: center;
+            line-height: 1.3;
             position: relative;
-            
-            /* Efecto de profundidad interna */
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.2);
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.25);
         }
 
-        /* Brillo sutil de superficie pulida */
+        /* Brillo interno superior de superficie pulida */
         .lado::before {
             content: "";
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 50%;
-            background: linear-gradient(to bottom, rgba(255,255,255,0.05), transparent);
-            border-radius: 12px 12px 0 0;
+            top: 0; left: 0; width: 100%; height: 40%;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.06), transparent);
             z-index: 1;
         }
 
-        /* Estilos de Texto dentro de la ficha */
-        .lado span {
-            position: relative; z-index: 2; /* Por encima del brillo */
+        .tipo-texto {
+            font-size: 0.62rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            background: rgba(0, 0, 0, 0.35);
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-weight: 700;
+            border: 1px solid rgba(255,255,255,0.08);
+            position: relative; z-index: 2;
         }
 
-        .txt-tema {
-            font-size: 0.85rem;
+        .lado span:not([class]) {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-weight: 600;
-            letter-spacing: 0.5px;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+            padding: 4px 0;
+            width: 100%;
+            word-break: break-word;
+            position: relative; z-index: 2;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.6);
         }
 
         .numero {
+            font-size: 0.75rem;
             font-weight: 700;
-            font-size: 1.1rem;
-            margin-top: 6px;
-            opacity: 0.9;
-            font-family: 'Courier New', Courier, monospace; /* Fuente técnica para números */
-            background: rgba(0,0,0,0.2);
-            padding: 2px 6px;
+            background: rgba(0,0,0,0.45);
+            padding: 1px 7px;
             border-radius: 4px;
+            border: 1px solid rgba(255,255,255,0.1);
+            font-family: 'Courier New', Courier, monospace;
+            position: relative; z-index: 2;
         }
 
-        .lado-der { border-left: none; /* Quitamos el borde antiguo */ }
-
-        /* =========================================
-           /* =========================================
-           PALETA DE COLORES PROFUNDA (GRADIANTES)
-           ========================================= */
+        /* --- ASIGNACIÓN DE GRADIENTES PREMIUM --- */
         .color-1 { background: var(--color-1-grad); }
-        .color-2 { background: var(--color-2-grad); }
         .color-3 { background: var(--color-3-grad); }
+        .color-4 { background: var(--color-4-grad); color: #1e1e24 !important; }
+        .color-6 { background: var(--color-6-grad); }
         
-        /* Color 4 (Amarillo) con contraste especial */
-        .color-4 { 
-            background: var(--color-4-grad); 
-            color: #2c3e50; /* Texto oscuro para contraste */
-        }
-        .color-4 .numero { background: rgba(0,0,0,0.1); color: #2c3e50; }
-        .color-4 .txt-tema { text-shadow: 0 1px 1px rgba(255,255,255,0.3); }
+        /* Ajuste de contraste para el color amarillo */
+        .color-4 span:not([class]) { text-shadow: 0 1px 1px rgba(255,255,255,0.2) !important; color: #1e1e24 !important; }
+        .color-4 .tipo-texto { background: rgba(0,0,0,0.12); border-color: rgba(0,0,0,0.08); color: #1e1e24; }
+        .color-4 .numero { background: rgba(0,0,0,0.12); border-color: rgba(0,0,0,0.08); color: #1e1e24; }
 
-        /* ZONA DE MANO (Sin cambios estructurales) */
-        .zona-mano {
-            margin-top: 40px;
+        /* --- MANO DEL JUGADOR --- */
+        .mano-jugador {
+            width: 95%;
+            max-width: 1200px;
+            background-color: #1a1a22;
+            border-top: 4px solid #8e44ad;
             padding: 25px;
-            background: rgba(0,0,0,0.3);
-            border-radius: 20px;
-            box-shadow: inset 0 2px 10px rgba(0,0,0,0.3);
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 -5px 25px rgba(0,0,0,0.5);
+            box-sizing: border-box;
         }
 
-        #mano-fichas {
+        .mis-fichas {
             display: flex;
-            gap: 20px;
             justify-content: center;
-            padding: 15px;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+            min-height: 120px;
+            align-items: center;
         }
+
+        /* ===================================================
+           SISTEMA DE DIFICULTAD DENTRO DEL CSS (RESTAURADO)
+           =================================================== */
+        
+        /* Dificultad Medio: Oculta estrictamente los números */
+        body.dificultad-medio .numero { 
+            display: none !important; 
+        }
+
+        /* Dificultad Difícil: Oculta números y desactiva colores temáticos */
+        body.dificultad-dificil .numero { 
+            display: none !important; 
+        }
+        body.dificultad-dificil .lado {
+            background: linear-gradient(135deg, #34495e, #2c3e50) !important;
+            color: #fff !important;
+        }
+        body.dificultad-dificil .lado span:not([class]) {
+            color: #fff !important;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.7) !important;
+        }
+        body.dificultad-dificil .lado .tipo-texto {
+            background: rgba(0, 0, 0, 0.4) !important;
+            border-color: rgba(255,255,255,0.1) !important;
+            color: #fff !important;
+        }
+        body.dificultad-dificil .ficha-tablero::before,
+        body.dificultad-dificil .ficha-mano::before {
+            background: #7f8c8d !important; /* Perno gris sin pistas */
+        }
+
     </style>
 </head>
 <body>
 
     <div id="pantalla-inicio" class="overlay-menu">
         <div class="contenido-menu">
-            <h1>DOMINÓ HUMANIDADES</h1>
-            <p>Construye el discurso colectivo conectando ideas.</p>
+            <h1 style="font-size: 2.3rem;">DOMINÓ: DISCURSO COLECTIVO</h1>
+            <p>Conecta las ideas por los extremos libres. Selecciona tu nivel:</p>
             
             <div class="selector-dificultad">
-                <button onclick="seleccionarDificultad('facil', this)" class="btn-dif">FÁCIL</button>
-                <button onclick="seleccionarDificultad('medio', this)" class="btn-dif">MEDIO</button>
-                <button onclick="seleccionarDificultad('dificil', this)" class="btn-dif">DIFÍCIL</button>
+                <button onclick="seleccionarDificultad('facil', this)" class="btn-dif">FÁCIL (Con Pistas)</button>
+                <button onclick="seleccionarDificultad('medio', this)" class="btn-dif">MEDIO (Sin Números)</button>
+                <button onclick="seleccionarDificultad('dificil', this)" class="btn-dif">DIFÍCIL (Sin Colores)</button>
             </div>
 
             <button id="btn-iniciar" onclick="iniciarJuego()" class="boton-jugar" style="display:none;">
-                INICIAR PARTIDA
+                COMENZAR PARTIDA
             </button>
         </div>
     </div>
 
-    <div id="contenedor-juego" style="display: none;">
-        <div id="mensaje">Selecciona una dificultad y comienza a conectar</div>
+    <div id="interfaz-juego">
+        <button onclick="regresarAlMenu()" class="btn-regresar">⬅ Cambiar de Nivel / Menú</button>
+
+        <h1>DOMINÓ INTERACTIVO PREMIUM</h1>
+        <div class="sub">Módulo 3: Humanidades Clásico</div>
         
-        <div id="tablero" ondragover="permitirSoltar(event)" ondrop="soltarFicha(event)">
-            <div class="ficha-tablero">
-                <div class="lado color-1">
-                    <span class="txt-tema">Inicio</span>
-                    <span class="numero">[1]</span>
+        <div id="mensaje">Arrastra una ficha de tu mano y conéctala a un extremo válido del tablero.</div>
+
+        <div class="tablero-contenedor" id="tablero" ondragover="permitirSoltar(event)" ondrop="soltarFicha(event)">
+            <div class="ficha-tablero" id="ficha-inicio">
+                <div class="lado color-3">
+                    <span class="tipo-texto">Pregunta</span>
+                    <span>¿Qué es la hermenéutica?</span>
+                    <span class="numero">[3]</span>
                 </div>
-                <div class="lado lado-der color-4">
-                    <span class="txt-tema">Meta</span>
-                    <span class="numero"></span>
+                <div class="lado color-3">
+                    <span class="tipo-texto">Respuesta</span>
+                    <span>El auto-examen consciente.</span>
+                    <span class="numero">[3]</span>
                 </div>
             </div>
         </div>
 
-        <div class="zona-mano">
-            <h3 style="text-align: center; margin-top: 0; color: #aaa; text-transform: uppercase; letter-spacing: 2px;">Tu Mano de Ideas</h3>
-            <div id="mano-fichas">
-                <div id="f1" class="ficha-mano" draggable="true" ondragstart="arrastrarFicha(event)" data-izq="4" data-der="2" data-txt-izq="Meta" data-txt-der="Redes">
-                    <div class="lado color-4"><span class="txt-tema">Meta</span><span class="numero"></span></div>
-                    <div class="lado lado-der color-2"><span class="txt-tema">Redes</span><span class="numero"></span></div>
+        <div class="mano-jugador">
+            <h3 style="margin-top: 0; color: #aaa; text-transform: uppercase; letter-spacing: 1px;">Tu Mano de Fichas</h3>
+            <div class="mis-fichas" id="mano">
+                
+                <div class="ficha-mano" id="f1" draggable="true" ondragstart="arrastrarFicha(event)" 
+                     data-izq="3" data-der="1" data-tipo-izq="Respuesta" data-tipo-der="Pregunta"
+                     data-txt-izq="Auto-examen crítico." 
+                     data-txt-der="¿Qué es el racismo sutil?">
+                    <div class="lado color-3"><span class="tipo-texto">Resp</span><span>Auto-examen crítico.</span><span class="numero">[3]</span></div>
+                    <div class="lado color-1"><span class="tipo-texto">Preg</span><span>¿Qué es el racismo sutil?</span><span class="numero">[1]</span></div>
                 </div>
-                <div id="f2" class="ficha-mano" draggable="true" ondragstart="arrastrarFicha(event)" data-izq="2" data-der="3" data-txt-izq="Redes" data-txt-der="Cultura">
-                    <div class="lado color-2"><span class="txt-tema">Redes</span><span class="numero"></span></div>
-                    <div class="lado lado-der color-3"><span class="txt-tema">Cultura</span><span class="numero"></span></div>
+
+                <div class="ficha-mano" id="f2" draggable="true" ondragstart="arrastrarFicha(event)" 
+                     data-izq="1" data-der="4" data-tipo-izq="Respuesta" data-tipo-der="Pregunta"
+                     data-txt-izq="Microagresiones diarias." 
+                     data-txt-der="¿Qué significa parresía?">
+                    <div class="lado color-1"><span class="tipo-texto">Resp</span><span>Microagresiones diarias.</span><span class="numero">[1]</span></div>
+                    <div class="lado color-4"><span class="tipo-texto">Preg</span><span>¿Qué significa parresía?</span><span class="numero">[4]</span></div>
                 </div>
+
+                <div class="ficha-mano" id="f3" draggable="true" ondragstart="arrastrarFicha(event)" 
+                     data-izq="4" data-der="6" data-tipo-izq="Respuesta" data-tipo-der="Pregunta"
+                     data-txt-izq="Hablar con la verdad." 
+                     data-txt-der="¿Qué es la prospectiva?">
+                    <div class="lado color-4"><span class="tipo-texto">Resp</span><span>Hablar con la verdad.</span><span class="numero">[4]</span></div>
+                    <div class="lado color-6"><span class="tipo-texto">Preg</span><span>¿Qué es la prospectiva?</span><span class="numero">[6]</span></div>
+                </div>
+
+                <div class="ficha-mano" id="f4" draggable="true" ondragstart="arrastrarFicha(event)" 
+                     data-izq="3" data-der="6" data-tipo-izq="Pregunta" data-tipo-der="Respuesta"
+                     data-txt-izq="¿Cómo iniciar el examen?" 
+                     data-txt-der="Pensando el futuro común.">
+                    <div class="lado color-3"><span class="tipo-texto">Preg</span><span>¿Cómo iniciar el examen?</span><span class="numero">[3]</span></div>
+                    <div class="lado color-6"><span class="tipo-texto">Resp</span><span>Pensando el futuro común.</span><span class="numero">[6]</span></div>
+                </div>
+
             </div>
         </div>
     </div>
 
     <script>
-        let extremoIzquierdo = 1;
-        let extremoDerecho = 4;
-        let dificultad = "";
+        let extremoIzqTablero = 3; 
+        let extremoDerTablero = 3;
+        let dificultadSeleccionada = "facil";
+
+        const copiaTableroOriginal = document.getElementById("tablero").innerHTML;
+        const copiaManoOriginal = document.getElementById("mano").innerHTML;
 
         function seleccionarDificultad(nivel, elemento) {
-            dificultad = nivel;
+            dificultadSeleccionada = nivel;
             document.querySelectorAll('.btn-dif').forEach(btn => btn.classList.remove('seleccionado'));
             elemento.classList.add('seleccionado');
             document.getElementById("btn-iniciar").style.display = "inline-block";
         }
 
         function iniciarJuego() {
+            document.body.className = ''; // Resetea clases previas
+            document.body.classList.add('dificultad-' + dificultadSeleccionada);
+            
             document.getElementById("pantalla-inicio").style.opacity = "0";
             setTimeout(() => {
                 document.getElementById("pantalla-inicio").style.display = "none";
-                document.getElementById("contenedor-juego").style.display = "block";
-                if(dificultad === 'dificil') {
-                    document.getElementById("mensaje").innerText = "Modo Difícil: ¡Conexiones sin pistas!";
-                }
+                document.getElementById("interfaz-juego").style.display = "flex";
             }, 500);
         }
 
-        function permitirSoltar(event) {
-            event.preventDefault();
+        function regresarAlMenu() {
+            extremoIzqTablero = 3;
+            extremoDerTablero = 3;
+
+            document.body.className = '';
+
+            document.getElementById("tablero").innerHTML = copiaTableroOriginal;
+            document.getElementById("mano").innerHTML = copiaManoOriginal;
+
+            const msgDiv = document.getElementById("mensaje");
+            msgDiv.style.color = "var(--accent-color)";
+            msgDiv.innerText = "Arrastra una ficha y conéctala a cualquier extremo válido.";
+            document.getElementById("tablero").style.borderColor = "var(--accent-color)";
+
+            document.getElementById("interfaz-juego").style.display = "none";
+            const pantallaMenu = document.getElementById("pantalla-inicio");
+            pantallaMenu.style.display = "flex";
+            setTimeout(() => { pantallaMenu.style.opacity = "1"; }, 50);
         }
+
+        function permitirSoltar(event) { event.preventDefault(); }
 
         function arrastrarFicha(event) {
             event.dataTransfer.setData("text/plain", event.target.id);
-            document.getElementById("mensaje").style.color = "#4da6ff";
-            document.getElementById("mensaje").innerText = "Buscando dónde conectar...";
+            document.getElementById("mensaje").style.color = "var(--accent-color)";
+            document.getElementById("mensaje").innerText = "Evaluando conexiones disponibles...";
         }
 
         function soltarFicha(event) {
             event.preventDefault();
             const idFicha = event.dataTransfer.getData("text/plain");
             const fichaElemento = document.getElementById(idFicha);
-            
             if (!fichaElemento) return;
 
             const valIzq = parseInt(fichaElemento.getAttribute("data-izq"));
             const valDer = parseInt(fichaElemento.getAttribute("data-der"));
             const txtIzq = fichaElemento.getAttribute("data-txt-izq");
             const txtDer = fichaElemento.getAttribute("data-txt-der");
+            const tipoIzq = fichaElemento.getAttribute("data-tipo-izq");
+            const tipoDer = fichaElemento.getAttribute("data-tipo-der");
 
             const msgDiv = document.getElementById("mensaje");
+            const tablero = document.getElementById("tablero");
 
-            // Lógica del Árbitro Digital para el extremo derecho
-            if (valIzq === extremoDerecho) {
-                crearFichaEnTablero(valIzq, valDer, txtIzq, txtDer);
-                extremoDerecho = valDer;
-                fichaElemento.remove();
-                msgDiv.style.color = "#27ae60";
-                msgDiv.innerText = "¡Conexión correcta!";
-            } 
-            else if (valDer === extremoDerecho) {
-                // Rotar la ficha lógicamente creando la nueva al revés
-                crearFichaEnTablero(valDer, valIzq, txtDer, txtIzq);
-                extremoDerecho = valIzq;
-                fichaElemento.remove();
-                msgDiv.style.color = "#27ae60";
-                msgDiv.innerText = "¡Conexión correcta!";
+            let fichaColocada = false;
+
+            // LÓGICA DE ÁRBITRO BIDIRECCIONAL
+            // 1. CONEXIÓN POR EL EXTREMO DERECHO
+            if (valIzq === extremoDerTablero) {
+                crearFichaEnTablero(valIzq, valDer, tipoIzq, tipoDer, txtIzq, txtDer, 'append');
+                extremoDerTablero = valDer; 
+                fichaColocada = true;
+            } else if (valDer === extremoDerTablero) {
+                crearFichaEnTablero(valDer, valIzq, tipoDer, tipoIzq, txtDer, txtIzq, 'append');
+                extremoDerTablero = valIzq;
+                fichaColocada = true;
             }
-            else {
-                msgDiv.style.color = "#ff4d4d";
-                msgDiv.innerText = "Movimiento inválido. Los temas no coinciden.";
+            // 2. CONEXIÓN POR EL EXTREMO IZQUIERDO
+            else if (valDer === extremoIzqTablero) {
+                crearFichaEnTablero(valIzq, valDer, tipoIzq, tipoDer, txtIzq, txtDer, 'prepend');
+                extremoIzqTablero = valIzq;
+                fichaColocada = true;
+            } else if (valIzq === extremoIzqTablero) {
+                crearFichaEnTablero(valDer, valIzq, tipoDer, tipoIzq, txtDer, txtIzq, 'prepend');
+                extremoIzqTablero = valDer;
+                fichaColocada = true;
+            }
+
+            if (fichaColocada) {
+                fichaElemento.remove(); 
+                msgDiv.style.color = "var(--success-color)";
+                msgDiv.innerText = "¡Conexión exitosa! El discurso sigue creciendo.";
+                
+                if(document.getElementById("mano").children.length === 0) {
+                    msgDiv.style.color = "var(--accent-color)";
+                    msgDiv.innerText = "🏆 ¡Partida Completada! Lograste vaciar tu mano con éxito.";
+                    tablero.style.borderColor = "var(--success-color)";
+                }
+            } else {
+                msgDiv.style.color = "var(--error-color)";
+                msgDiv.innerText = "❌ Movimiento inválido. Los conceptos de este dominó no coinciden.";
             }
         }
 
-        // Función actualizada para generar la estructura Premium dinámicamente
-        function crearFichaEnTablero(izq, der, txtI, txtD) {
+        function crearFichaEnTablero(izq, der, tipoI, tipoD, txtI, txtD, posicion) {
             const tablero = document.getElementById("tablero");
             const nuevaFicha = document.createElement("div");
             nuevaFicha.className = "ficha-tablero";
             
-            // Generar estructura Premium respetando el color 4 oscuro
+            // Re-renderizado exacto preservando el diseño premium
             nuevaFicha.innerHTML = `
                 <div class="lado color-${izq}">
-                    <span class="txt-tema">${txtI}</span>
+                    <span class="tipo-texto">${tipoI}</span>
+                    <span>${txtI}</span>
                     <span class="numero">[${izq}]</span>
                 </div>
-                <div class="lado lado-der color-${der}">
-                    <span class="txt-tema">${txtD}</span>
+                <div class="lado color-${der}">
+                    <span class="tipo-texto">${tipoD}</span>
+                    <span>${txtD}</span>
                     <span class="numero">[${der}]</span>
                 </div>
             `;
             
-            tablero.appendChild(nuevaFicha);
+            if (posicion === 'append') {
+                tablero.appendChild(nuevaFicha);
+                setTimeout(() => { tablero.scrollTo({ left: tablero.scrollWidth, behavior: 'smooth' }); }, 40);
+            } else {
+                tablero.insertBefore(nuevaFicha, tablero.firstChild);
+                setTimeout(() => { tablero.scrollTo({ left: 0, behavior: 'smooth' }); }, 40);
+            }
         }
     </script>
 </body>
