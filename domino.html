@@ -146,17 +146,16 @@
             min-height: 220px;
             padding: 35px;
             display: flex;
-            justify-content: center;
+            justify-content: flex-start; /* Corregido para evitar el corte y solapamiento al desbordar */
             align-items: center;
             gap: 20px;
             margin-bottom: 30px;
             overflow-x: auto;
             box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+            scroll-behavior: smooth;
         }
 
-        /* =========================================
-           REDISEÑO VISUAL DE LAS FICHAS (TABLERO)
-           ========================================= */
+        /* --- REDISEÑO VISUAL DE LAS FICHAS (TABLERO) --- */
         .ficha-tablero {
             display: flex;
             width: 270px;
@@ -167,6 +166,7 @@
             flex-shrink: 0;
             box-shadow: 0 8px 16px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.2);
             position: relative;
+            box-sizing: border-box;
             animation: aparecer 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) ease-out;
         }
 
@@ -201,7 +201,9 @@
         }
 
         .lado {
-            flex: 1;
+            flex: 1 1 50%; /* Bloquea estrictamente el tamaño a la mitad exacta de la ficha */
+            min-width: 0;   /* Evita que textos largos deformen la proporción horizontal */
+            box-sizing: border-box;
             padding: 12px 10px;
             display: flex;
             flex-direction: column;
@@ -235,6 +237,9 @@
             justify-content: center;
             font-weight: 600;
             padding: 4px 0;
+            width: 100%;
+            word-break: break-word; /* Rompe textos largos de forma segura sin empujar los bordes */
+            box-sizing: border-box;
         }
 
         .numero {
@@ -246,9 +251,7 @@
             border: 1px solid rgba(255,255,255,0.1);
         }
 
-        /* =========================================
-           REDISEÑO VISUAL DE LAS FICHAS (MANO)
-           ========================================= */
+        /* --- REDISEÑO VISUAL DE LAS FICHAS (MANO) --- */
         .mano-jugador {
             width: 95%;
             max-width: 1200px;
@@ -281,6 +284,7 @@
             transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.25s ease;
             flex-shrink: 0;
             position: relative;
+            box-sizing: border-box;
             box-shadow: 0 4px 8px rgba(0,0,0,0.4);
         }
 
@@ -303,7 +307,9 @@
         }
 
         .lado-mini {
-            flex: 1;
+            flex: 1 1 50%;
+            min-width: 0;
+            box-sizing: border-box;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -337,19 +343,12 @@
         .color-4 .numero { background: rgba(0,0,0,0.15); border-color: rgba(0,0,0,0.1); color: #000; }
         .color-4 .tipo-texto-num { background: rgba(0,0,0,0.15); color: #000; }
 
-        /* =========================================
-           SISTEMA DE DIFICULTADES DINÁMICAS
-           ========================================= */
-        
-        /* FÁCIL: Muestra todo de forma regular */
-
-        /* MEDIO: Ocultar los números guía */
+        /* --- SISTEMA DE DIFICULTADES DINÁMICAS --- */
         body.dificultad-medio .numero,
         body.dificultad-medio .tipo-texto-num { 
             display: none !important; 
         }
 
-        /* DIFÍCIL: Ocultar números e igualar fondos a Gris Mate Satinado */
         body.dificultad-dificil .numero,
         body.dificultad-dificil .tipo-texto-num { 
             display: none !important; 
@@ -361,12 +360,12 @@
             color: #fff !important;
         }
         body.dificultad-dificil .ficha-tablero::before {
-            background: #7f8c8d; /* Remache gris en modo difícil */
+            background: #7f8c8d;
         }
 
     </style>
 </head>
-  <body>
+<body>
 
     <div id="pantalla-inicio" class="overlay-menu">
         <div class="contenido-menu">
@@ -449,12 +448,10 @@
     </div>
 
     <script>
-        // Variables de control del tablero
         let extremoIzqTablero = 3; 
         let extremoDerTablero = 3;
         let dificultadSeleccionada = "facil";
 
-        // Respaldamos el HTML de inicio para poder reiniciar el juego infinitamente
         const copiaTableroOriginal = document.getElementById("tablero").innerHTML;
         const copiaManoOriginal = document.getElementById("mano").innerHTML;
 
@@ -466,9 +463,7 @@
         }
 
         function iniciarJuego() {
-            // Asignar clase de dificultad al body para que actúe el CSS
             document.body.classList.add('dificultad-' + dificultadSeleccionada);
-            
             document.getElementById("pantalla-inicio").style.opacity = "0";
             setTimeout(() => {
                 document.getElementById("pantalla-inicio").style.display = "none";
@@ -477,24 +472,19 @@
         }
 
         function regresarAlMenu() {
-            // 1. Restaurar valores lógicos por defecto
             extremoIzqTablero = 3;
             extremoDerTablero = 3;
 
-            // 2. Remover todas las clases CSS de dificultad asignadas al body
             document.body.classList.remove('dificultad-facil', 'dificultad-medio', 'dificultad-dificil');
 
-            // 3. Reestablecer el HTML original de la mesa y de la mano del jugador
             document.getElementById("tablero").innerHTML = copiaTableroOriginal;
             document.getElementById("mano").innerHTML = copiaManoOriginal;
 
-            // 4. Restaurar mensajes informativos y bordes por defecto
             const msgDiv = document.getElementById("mensaje");
             msgDiv.style.color = "var(--accent-color)";
             msgDiv.innerText = "Arrastra una ficha y conéctala a cualquier extremo válido.";
             document.getElementById("tablero").style.borderColor = "var(--accent-color)";
 
-            // 5. Ocultar el tablero y volver a mostrar la pantalla del menú principal
             document.getElementById("interfaz-juego").style.display = "none";
             const pantallaMenu = document.getElementById("pantalla-inicio");
             pantallaMenu.style.display = "flex";
@@ -531,7 +521,7 @@
 
             let fichaColocada = false;
 
-            // 1. CONEXIÓN POR EL EXTREMO DERECHO DEL TABLERO
+            // 1. CONEXIÓN POR EL EXTREMO DERECHO
             if (valIzq === extremoDerTablero) {
                 crearFichaEnTablero(valIzq, valDer, tipoIzq, tipoDer, txtIzq, txtDer, 'append');
                 extremoDerTablero = valDer; 
@@ -541,7 +531,7 @@
                 extremoDerTablero = valIzq;
                 fichaColocada = true;
             }
-            // 2. CONEXIÓN POR EL EXTREMO IZQUIERDO DEL TABLERO
+            // 2. CONEXIÓN POR EL EXTREMO IZQUIERDO
             else if (valDer === extremoIzqTablero) {
                 crearFichaEnTablero(valIzq, valDer, tipoIzq, tipoDer, txtIzq, txtDer, 'prepend');
                 extremoIzqTablero = valIzq;
@@ -557,7 +547,6 @@
                 msgDiv.style.color = "var(--success-color)";
                 msgDiv.innerText = "¡Excelente jugada! Continúa construyendo.";
                 
-                // Evaluar si el jugador se quedó sin fichas en la mano (Victoria)
                 if(document.getElementById("mano").children.length === 0) {
                     msgDiv.style.color = "var(--accent-color)";
                     msgDiv.innerText = "🏆 ¡Felicidades! Has vaciado tu mano y conectado todo el discurso.";
@@ -568,7 +557,8 @@
                 msgDiv.innerText = "❌ Movimiento inválido. Ningún extremo coincide con la mesa.";
             }
         }
-      function crearFichaEnTablero(izq, der, tipoI, tipoD, txtI, txtD, posicion) {
+
+        function crearFichaEnTablero(izq, der, tipoI, tipoD, txtI, txtD, posicion) {
             const tablero = document.getElementById("tablero");
             const nuevaFicha = document.createElement("div");
             nuevaFicha.className = "ficha-tablero";
@@ -588,10 +578,14 @@
             
             if (posicion === 'append') {
                 tablero.appendChild(nuevaFicha);
-                tablero.scrollLeft = tablero.scrollWidth; 
+                setTimeout(() => {
+                    tablero.scrollTo({ left: tablero.scrollWidth, behavior: 'smooth' });
+                }, 40);
             } else {
                 tablero.insertBefore(nuevaFicha, tablero.firstChild);
-                tablero.scrollLeft = 0; 
+                setTimeout(() => {
+                    tablero.scrollTo({ left: 0, behavior: 'smooth' });
+                }, 40);
             }
         }
     </script>
